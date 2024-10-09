@@ -310,17 +310,26 @@ services:
   #postgres: 
   #portainer
 
+  
   c-21-28.front.admin:
     build:
       context: src/front/admin
       dockerfile_inline: |
-        FROM node:22-alpine    
+        FROM node:20.18-alpine
+        RUN apk update
+        RUN apk add --no-cache bash libc6-compat mc
         RUN mkdir -p /home/apps/admin
+        #RUN npm install -g npm nodemon create-react-app @types/react @types/react-dom 
+        #RUN npx create-remix@latest /home/apps/admin
+        #
         WORKDIR /home/apps/admin
-        RUN npm i -g nodemon
+        #RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        #RUN npm i -D @remix-run/dev vite react-devtools
+        # react react-dom
+        #
+        #CMD ["nodemon", "--exec", "npm", "start"]
         EXPOSE 3000
         CMD tail -f /dev/null
-        #CMD ["nodemon", "--exec", "npm", "start"]
         # nothing pid 1 
     container_name: c-21-28.admin
     logging:
@@ -335,6 +344,7 @@ services:
       - 3006:3000
     volumes:
       - ./src/front/admin:/home/apps/admin
+      - ./node_modules/admin:/home/apps/admin/node_modules
     depends_on:
       -  c-21-28.api_django
     develop:
@@ -342,15 +352,92 @@ services:
         - action: sync
           path: ./src/front/admin
           target: /home/apps/admin
+          ignore:
+            - ./src/front/admin/node_modules/
     deploy:
       replicas: 1
       resources:
         limits:
-          cpus: "0.50"
-          memory: 32M
+          cpus: "1"
+          memory: 1G
         reservations:
-          cpus: "0.25"
-          memory: 16M  
+          cpus: "0.50"
+          memory: 512M   
+
+    # Demora. pero la idea es tener uno solo
+    # caso contrario que se utilice el otro compose
+    c-21-28.front.client:
+      build:
+        context: src/front
+        dockerfile_inline: |
+          FROM node:22-alpine        
+          RUN apk update
+          RUN apk add --no-cache bash libc6-compat mc
+          RUN npm install -g npm@10.9.0
+          RUN npm i -g nodemon
+          WORKDIR /home/apps  
+          #RUN npx create-remix@latest /home/apps/admin
+          #RUN npx create-remix@latest /home/apps/automotriz
+          #RUN npx create-remix@latest /home/apps/cosmetica
+          #RUN npx create-remix@latest /home/apps/medico
+          WORKDIR /home/apps       
+          EXPOSE 3000
+          CMD tail -f /dev/null
+          # nothing pid 1 
+      container_name: c-21-28.fronts
+      logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+      stdin_open: true
+      hostname: client  
+      networks:
+        c-21-28_network: {}
+      ports:
+        - 3000:3000
+      volumes:
+        - ./src/front:/home/apps
+        - ./src/front/admin:/home/apps/admin
+        - ./node_modules/admin:/home/apps/admin/node_modules
+        - ./src/front/automotriz:/home/apps/automotriz
+        - ./node_modules/automotriz:/home/apps/automotriz/node_modules
+        - ./src/front/cosmetica:/home/apps/cosmetica
+        - ./node_modules/cosmetica:/home/apps/cosmetica/node_modules
+        - ./src/front/medico:/home/apps/medico
+        - ./node_modules/medico:/home/apps/medico/node_modules
+      develop:
+        watch:
+          - action: sync
+            path: ./src/front/admin
+            target: /home/apps/admin
+            ignore:
+              - ./src/front/admin/node_modules/
+          - action: sync
+            path: ./src/front/automotriz
+            target: /home/apps/automotriz
+            ignore:
+              - ./src/front/automotriz/node_modules/
+          - action: sync
+            path: ./src/front/cosmetica
+            target: /home/apps/cosmetica
+            ignore:
+              - ./src/front/cosmetica/node_modules/
+          - action: sync
+            path: ./src/front/medico
+            target: /home/apps/medico
+            ignore:
+              - ./src/front/medico/node_modules/
+      depends_on:
+        -  c-21-28.api_django
+      deploy:
+        replicas: 1
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1G
+          reservations:
+            cpus: "0.50"
+            memory: 512M             
 
    
 
