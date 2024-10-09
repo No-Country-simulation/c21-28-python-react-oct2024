@@ -28,6 +28,10 @@ services:
         RUN mkdir -p /home/apps/admin
         WORKDIR /home/apps/admin
         RUN npm i -g nodemon
+        RUN npx create-remix@latest
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
         # nothing pid 1 
@@ -69,6 +73,10 @@ services:
         RUN mkdir -p /home/apps/medico
         WORKDIR /home/apps/medico
         RUN npm i -g nodemon
+        RUN npx create-remix@latest
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
@@ -108,6 +116,10 @@ services:
         RUN mkdir -p /home/apps/cosmetica
         WORKDIR /home/apps/cosmetica
         RUN npm i -g nodemon
+        RUN npx create-remix@latest
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
@@ -149,6 +161,10 @@ services:
         RUN mkdir -p /home/apps/automotriz
         WORKDIR /home/apps/automotriz
         RUN npm i -g nodemon
+        RUN npx create-remix@latest
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
