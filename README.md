@@ -6,7 +6,10 @@ Bajar docker
 
 Abrir una ventana de comandos.
 pararse en el root de esta carpeta
-docker-compose build
+
+
+docker-compose build --no-cache
+
 docker-compose up -d
 
 

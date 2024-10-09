@@ -221,13 +221,43 @@ services:
         RUN apk update
         RUN apk add --no-cache bash libc6-compat mc
         RUN npm install -g npm@10.9.0
-        RUN npm i -g nodemon
-        WORKDIR /home/apps  
+        #
+        RUN mkdir -p /home/apps/admin
+        WORKDIR /home/apps/admin
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/automotriz
+        WORKDIR /home/apps/automotriz
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/cosmetica
+        WORKDIR /home/apps/cosmetica
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/medico
+        WORKDIR /home/apps/medico
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
         #RUN npx create-remix@latest /home/apps/admin
         #RUN npx create-remix@latest /home/apps/automotriz
         #RUN npx create-remix@latest /home/apps/cosmetica
         #RUN npx create-remix@latest /home/apps/medico
-        WORKDIR /home/apps       
+        #
+           RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        npm install @types/react @types/react-dom
+        RUN npm install -g react-devtools
+        #
+        WORKDIR /home/apps
+        RUN npm i -g nodemon
         EXPOSE 3000
         CMD tail -f /dev/null
         # nothing pid 1 
@@ -245,35 +275,23 @@ services:
     volumes:
       - ./src/front:/home/apps
       - ./src/front/admin:/home/apps/admin
-      - ./node_modules_admin:/home/apps/admin/node_modules
       - ./src/front/automotriz:/home/apps/automotriz
-      - ./node_modules_automotriz:/home/apps/automotriz/node_modules
       - ./src/front/cosmetica:/home/apps/cosmetica
-      - ./node_modules_cosmetica:/home/apps/cosmetica/node_modules
       - ./src/front/medico:/home/apps/medico
-      - ./node_modules_medico:/home/apps/medico/node_modules
     develop:
       watch:
         - action: sync
           path: ./src/front/admin
           target: /home/apps/admin
-          ignore:
-            - ./src/front/admin/node_modules/
         - action: sync
           path: ./src/front/automotriz
           target: /home/apps/automotriz
-          ignore:
-            - ./src/front/automotriz/node_modules/
         - action: sync
           path: ./src/front/cosmetica
           target: /home/apps/cosmetica
-          ignore:
-            - ./src/front/cosmetica/node_modules/
         - action: sync
           path: ./src/front/medico
           target: /home/apps/medico
-          ignore:
-            - ./src/front/medico/node_modules/
     depends_on:
       -  c-21-28.api_django
     deploy:
@@ -296,21 +314,10 @@ services:
     build:
       context: src/front/admin
       dockerfile_inline: |
-        FROM node:22-alpine
-        RUN apk update
-        RUN apk add --no-cache bash libc6-compat mc
+        FROM node:22-alpine    
         RUN mkdir -p /home/apps/admin
-        #RUN npx create-remix@latest /home/apps/admin
-        #
-        RUN npm i -g npm nodemon
         WORKDIR /home/apps/admin
-        RUN npm init -y
-        RUN npm install @types/react @types/react-dom
-        #RUN npm install -g react-devtools
-        #RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
-        #RUN npm i -D @remix-run/dev vite
-        # react react-dom
-        #
+        RUN npm i -g nodemon
         EXPOSE 3000
         CMD tail -f /dev/null
         #CMD ["nodemon", "--exec", "npm", "start"]
@@ -328,7 +335,6 @@ services:
       - 3006:3000
     volumes:
       - ./src/front/admin:/home/apps/admin
-      - ./node_modules_admin:/home/apps/admin/node_modules
     depends_on:
       -  c-21-28.api_django
     develop:
@@ -336,8 +342,6 @@ services:
         - action: sync
           path: ./src/front/admin
           target: /home/apps/admin
-          ignore:
-            - ./src/front/admin/node_modules/
     deploy:
       replicas: 1
       resources:
