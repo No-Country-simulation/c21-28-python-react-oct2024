@@ -138,28 +138,7 @@ services:
         reservations:
           cpus: "0.50"
           memory: 128M
-
-  c-21-28.portainer:
-    container_name: c-21-28.docker_admin
-    image: portainer/portainer-ce:alpine
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-    hostname: portainer
-    restart: always
-    networks:
-      c-21-28_network: {}
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 512M
-        reservations:
-          cpus: "0.50"
-          memory: 256M    
-
+ 
   c-21-28.api_django:
     container_name: c-21-28.api_django
     logging:
@@ -293,8 +272,10 @@ services:
           memory: 16M 
 
   #redis:
+  #rabbit
   #maildev:  
   #postgres: 
+  #portainer
 
   c-21-28.front.admin:
     build:
