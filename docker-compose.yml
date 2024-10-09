@@ -189,7 +189,7 @@ services:
       c-21-28_network: {}
     volumes:
       - ./src/back/api:/home/python/app/
-      - ./src/back/home:/home
+      #- ./src/back/home:/home
     env_file:
       - ./.env 
     depends_on:
