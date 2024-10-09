@@ -139,6 +139,27 @@ services:
           cpus: "0.50"
           memory: 128M
 
+  c-21-28.portainer:
+    container_name: c-21-28.docker_admin
+    image: portainer/portainer-ce:alpine
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    hostname: portainer
+    restart: always
+    networks:
+      c-21-28_network: {}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.50"
+          memory: 256M    
+
   c-21-28.api_django:
     container_name: c-21-28.api_django
     logging:
@@ -185,6 +206,8 @@ services:
     restart: always
     ports: 
       - ${API_PORT_IN}:${API_PORT_OUT}/tcp
+      - 9229:9229
+      - 9230:9230
     networks:
       c-21-28_network: {}
     volumes:
@@ -284,7 +307,7 @@ services:
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
         # nothing pid 1 
-    container_name: management_admin
+    container_name: c-21-28.admin
     logging:
       options:
         max-size: 10m
@@ -325,7 +348,7 @@ services:
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
-    container_name: medico
+    container_name: c-21-28.medico
     logging:
       options:
         max-size: 10m
@@ -364,7 +387,7 @@ services:
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
-    container_name: cosmetica
+    container_name: c-21-28.cosmetica
     logging:
       options:
         max-size: 10m
@@ -405,7 +428,7 @@ services:
         EXPOSE 3000
         CMD ["nodemon", "--exec", "npm", "start"]
          # nothing pid 1 
-    container_name: automotriz
+    container_name: c-21-28.automotriz
     logging:
       options:
         max-size: 10m
