@@ -269,6 +269,10 @@ services:
           cpus: "0.25"
           memory: 16M 
 
+  #redis:
+  #maildev:  
+  #postgres: 
+
   c-21-28.front.admin:
     build:
       context: src/front/admin

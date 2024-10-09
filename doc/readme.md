@@ -1,0 +1,1 @@
+terminar doc y pasarlo a readme> yair lo maneja bien
