@@ -210,14 +210,13 @@ services:
           memory: 1G
         reservations:
           cpus: "0.50"
-          memory: 512M      
-  
+          memory: 512M  
   #redis:
   #rabbit
   #maildev:  
   #postgres: 
   #portainer
-  c-21-28.front.installer:
+  c-21-28.front.shell:
     build:
       context: src/front
       dockerfile_inline: |
@@ -225,16 +224,20 @@ services:
         RUN apk update
         RUN apk add --no-cache bash libc6-compat mc
         WORKDIR /home/apps
+        RUN npm install yarn
+        RUN yarn global add @types/react
+        RUN yarn global add @types/react-dom
+        RUN yarn global add create-react-app
         EXPOSE 3000
         CMD tail -f /dev/null
         # nothing pid 1 
-    container_name: c-21-28.front.installer
+    container_name: c-21-28.front.shell
     logging:
       options:
         max-size: 10m
         max-file: "3"
     stdin_open: true
-    hostname: c-21-28.front.installer  
+    hostname: c-21-28.front.shell  
     networks:
       c-21-28_network: {}
     ports:

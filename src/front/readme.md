@@ -3,29 +3,34 @@
 # Docker
 
 ## Buildeo
-docker-compose build --no-cache c-21-28.front.installer 
+
+docker-compose build --no-cache c-21-28.front.shell 
 
 ## Up
-docker-compose up -d c-21-28.front.installer 
+
+docker-compose up -d c-21-28.front.shell 
 
 ## Down
-docker-compose down c-21-28.front.installer 
+
+docker-compose down c-21-28.front.shell 
 
 ## Terminal a docker
-docker exec -it c-21-28.front.installer sh
+
+docker exec -it c-21-28.front.shell sh
 /src/front> su prompt
 
 ## Commander ( Solo para mi :D )
 
 /src/front>mc
 
-## Globales
+## Front
 
-npm install --global yarn
+### Globales Utilizadas
 
-npm i -g yarn --force
-npm i -g npm nodemon --force
-npm i -g @types/react @types/react-dom  --force
+npm install yarn
+yarn global add create-react-app
+yarn global add @types/react
+yarn global add @types/react-dom
 
 ### Proyecto
 
@@ -35,7 +40,7 @@ yarn create-react-app admin
 yarn create-react-app automotriz
 yarn create-react-app cosmetica
 yarn create-react-app medico 
-yarn create-react-app pizza
+yarn create-react-app pizza 
 
 # Acceso por terminal para Instalar 
 
@@ -69,3 +74,5 @@ npx create-react-app my-app
 npx create-remix
 https://remix.run/
 https://mui.com/
+
+COREUI ?
