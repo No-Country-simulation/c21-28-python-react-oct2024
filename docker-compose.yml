@@ -20,7 +20,7 @@ networks :
 services:
 
   c-21-28.busybox:
-        container_name: busybox
+        container_name: c-21-28.busybox
         image: busybox:uclibc #glibc
         hostname:  busybox
         restart: always
@@ -228,7 +228,7 @@ services:
         EXPOSE 3000
         CMD tail -f /dev/null
         # nothing pid 1 
-    container_name: client-all
+    container_name: c-21-28.fronts
     logging:
       options:
         max-size: 10m
@@ -286,7 +286,8 @@ services:
         WORKDIR /home/apps/admin
         RUN npm i -g nodemon
         EXPOSE 3000
-        CMD ["nodemon", "--exec", "npm", "start"]
+        CMD tail -f /dev/null
+        #CMD ["nodemon", "--exec", "npm", "start"]
         # nothing pid 1 
     container_name: c-21-28.admin
     logging:
