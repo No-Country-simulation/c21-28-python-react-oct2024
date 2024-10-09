@@ -1,0 +1,22 @@
+        #ADD index.html index.html
+        #ADD server.py server.py
+        #CMD ["python", "server.py"]
+        #EXPOSE 8000
+        #ENTRYPOINT [“python”, “server.py”] 
+        #
+        #RUN django-admin startproject manage_resources
+        # 
+        #EXPOSE 8000
+        #CMD tail -f /dev/null
+        # Start the server
+        #CMD ["python", "server.py", "runserver", "0.0.0.0:8000"]
+        #
+        #ENV PATH="/home/worker/.local/bin:${PATH}"
+        #COPY --chown=python:python Pipfile Pipfile
+        #RUN pipenv lock -r > requirements.txt
+        #RUN pip install --user -r /home/python/app/requirements.txt
+        #COPY --chown=python:python . .
+        #CMD [ "python","-u","server.py", "runserver", "0.0.0.0:5000" ]
+        #
+        #EXPOSE 8000
+        #ENTRYPOINT ["/home/python/app/django.sh"]

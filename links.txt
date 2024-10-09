@@ -1,0 +1,11 @@
+https://gist.github.com/PatrickKalkman/b7fabb5dfea9f09200c2e34aa792bd6b
+https://florian-dahlitz.de/articles/run-python-applications-as-non-root-user-in-docker-by-example
+https://medium.com/@mannerdigra/python-mysql-usando-docker-compose-y-dockerfiles-7bd9ec342889
+
+https://medium.com/@freyandhy/set-up-django-project-with-alpine-docker-image-in-6-steps-17982099986
+
+https://potiuk.com/to-virtualenv-or-not-to-virtualenv-for-docker-this-is-the-question-6f980d753b46
+
+https://dev.to/francescoxx/python-crud-rest-api-using-django-postgres-docker-and-docker-compose-4nhe
+
+https://rpep.dev/posts/alpine-python-antipattern/
