@@ -245,13 +245,13 @@ services:
     volumes:
       - ./src/front:/home/apps
       - ./src/front/admin:/home/apps/admin
-      - ./node_modules_admin:/home/apps/admin/node_modules
+      - ./node_modules/admin:/home/apps/admin/node_modules
       - ./src/front/automotriz:/home/apps/automotriz
-      - ./node_modules_automotriz:/home/apps/automotriz/node_modules
+      - ./node_modules/automotriz:/home/apps/automotriz/node_modules
       - ./src/front/cosmetica:/home/apps/cosmetica
-      - ./node_modules_cosmetica:/home/apps/cosmetica/node_modules
+      - ./node_modules/cosmetica:/home/apps/cosmetica/node_modules
       - ./src/front/medico:/home/apps/medico
-      - ./node_modules_medico:/home/apps/medico/node_modules
+      - ./node_modules/medico:/home/apps/medico/node_modules
     develop:
       watch:
         - action: sync
@@ -328,7 +328,7 @@ services:
       - 3006:3000
     volumes:
       - ./src/front/admin:/home/apps/admin
-      - ./node_modules_admin:/home/apps/admin/node_modules
+      - ./node_modules/admin:/home/apps/admin/node_modules
     depends_on:
       -  c-21-28.api_django
     develop:
@@ -346,10 +346,4 @@ services:
           memory: 32M
         reservations:
           cpus: "0.25"
-          memory: 16M  
-
-   
-
-     
-
-  
+          memory: 16M   
