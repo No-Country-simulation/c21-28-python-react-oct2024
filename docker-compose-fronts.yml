@@ -1,0 +1,187 @@
+networks :
+    c-21-28_network :
+        driver: bridge
+        name: c-21-28_network
+        attachable: true
+        external: false 
+        enable_ipv6: false
+
+
+    api_modules_network :
+        name: apis_modules_network
+        attachable: false
+        external: false
+        enable_ipv6: false
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.10.0.0/16
+
+services:
+ 
+
+  c-21-28.front.admin:
+    build:
+      context: src/front/admin
+      dockerfile_inline: |
+        FROM node:22-alpine    
+        RUN mkdir -p /home/apps/admin
+        WORKDIR /home/apps/admin
+        RUN npm i -g nodemon
+        EXPOSE 3000
+        CMD ["nodemon", "--exec", "npm", "start"]
+        # nothing pid 1 
+    container_name: c-21-28.admin
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    stdin_open: true
+    hostname: admin  
+    networks:
+      c-21-28_network: {}
+    ports:
+      - 3006:3000
+    volumes:
+      - ./src/front/admin:/home/apps/admin
+    depends_on:
+      -  c-21-28.api_django
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/admin
+          target: /home/apps/admin
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M  
+
+  c-21-28.front.medico:
+    build:
+      context: src/front/medico
+      dockerfile_inline: |
+        FROM node:22-alpine    
+        RUN mkdir -p /home/apps/medico
+        WORKDIR /home/apps/medico
+        RUN npm i -g nodemon
+        EXPOSE 3000
+        CMD ["nodemon", "--exec", "npm", "start"]
+         # nothing pid 1 
+    container_name: c-21-28.medico
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    stdin_open: true
+    hostname: medico  
+    networks:
+      c-21-28_network: {}
+    ports:
+      - 3005:3000
+    volumes:
+      - ./src/front/medico:/home/apps/medico
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/medico
+          target: /home/apps/medico  
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M  
+
+  c-21-28.front.cosmetica:
+    build:
+      context: src/front/cosmetica
+      dockerfile_inline: |
+        FROM node:22-alpine    
+        RUN mkdir -p /home/apps/cosmetica
+        WORKDIR /home/apps/cosmetica
+        RUN npm i -g nodemon
+        EXPOSE 3000
+        CMD ["nodemon", "--exec", "npm", "start"]
+         # nothing pid 1 
+    container_name: c-21-28.cosmetica
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      c-21-28_network: {}
+    stdin_open: true
+    hostname: cosmetica
+    ports:
+      - 3004:3000
+    volumes:
+      - ./src/front/cosmetica:/home/apps/cosmetica
+    depends_on:
+      -  c-21-28.api_django
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/cosmetica
+          target: /home/apps/cosmetica 
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M 
+
+  c-21-28.front.automotriz:
+    build:
+      context: src/front/automotriz
+      dockerfile_inline: |
+        FROM node:22-alpine    
+        RUN mkdir -p /home/apps/automotriz
+        WORKDIR /home/apps/automotriz
+        RUN npm i -g nodemon
+        EXPOSE 3000
+        CMD ["nodemon", "--exec", "npm", "start"]
+         # nothing pid 1 
+    container_name: c-21-28.automotriz
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      c-21-28_network: {}
+    stdin_open: true
+    hostname: automotriz
+    ports:
+      - 3003:3000
+    volumes:
+      - ./src/front/automotriz:/home/apps/automotriz
+    depends_on:
+      -  c-21-28.api_django
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/automotriz
+          target: /home/apps/automotriz
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M
+
+     
+
+  
