@@ -25,7 +25,7 @@ pararse en el root de esta carpeta
 docker-compose build --no-cache
 
 docker-compose up -d
-
+docker debug c-21-28.api_django
 docker container ps
 c-21-28.api_django
 
