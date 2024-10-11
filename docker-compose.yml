@@ -17,6 +17,8 @@ networks :
             config:
                 - subnet: 10.10.0.0/16
 
+
+
 services:
 
   c-21-28.busybox:
@@ -163,17 +165,20 @@ services:
             ca-certificates gcc mysql-dev linux-headers musl-dev \
             libffi-dev jpeg-dev zlib-dev  
         #
-        RUN pip install django djangorestframework djangorestframework-simplejwt django-model-utils
-        # psycopg2-binary 
-        RUN pip install BeautifulSoup4 pandas requests mysql-connector-python  
+        RUN pip install django djangorestframework djangorestframework-simplejwt django-model-utils django-admin-cli pika
+        # 
+        RUN pip install BeautifulSoup4 pandas requests mysql-connector-python psycopg2-binary  
+        #
+        RUN pip install django-filter  Pillow 
+        RUN pip install Markdown django-ckeditor 
         #
         RUN pip install --upgrade pip
         RUN pip install pipenv
         #
         RUN pip freeze > /home/requirements.txt
         #
-        #RUN adduser -D python
-        #RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
+        RUN adduser -D python
+        RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
         #
         WORKDIR /home/python/app
         #USER python
@@ -253,3 +258,6 @@ services:
         reservations:
           cpus: "2"
           memory: 2G  
+
+  
+   

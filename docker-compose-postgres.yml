@@ -1,0 +1,124 @@
+networks :
+    c-21-28_network :
+        driver: bridge
+        name: c-21-28_network
+        attachable: true
+        external: false 
+        enable_ipv6: false
+
+
+    api_modules_network :
+        name: apis_modules_network
+        attachable: false
+        external: false
+        enable_ipv6: false
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.10.0.0/16
+
+configs:
+  pgpass:
+    content: postgres:5432:*:postgres:postgres
+  servers.json:
+    content: |
+      {"Servers": {"1": {
+        "Group": "Servers",
+        "Name": "Postgres 16.6",
+        "Host": "postgres",
+        "Port": 5432,
+        "MaintenanceDB": "postgres",
+        "Username": "postgres",
+        "PassFile": "/pgpass",
+        "SSLMode": "prefer"
+      }}}
+
+services:
+
+  c-21-28.postgres:
+    image: postgres:17.0-alpine3.20
+    container_name:  c-21-28.postgres
+    #restart: on-failure
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - 5432:5432
+    environment:
+        PGDATA: /var/lib/postgresql/data/
+        POSTGRES_DB: c_21_28
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+        POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256" 
+    volumes:
+      - ./.data/psql:/var/lib/postgresql/data/c2128/
+      - ./.data/bck:/home
+      - ./.data/tmp:/var/lib/postgresql/data/base/pgsql_tmp
+    #command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]  
+    healthcheck:
+      #test: ["CMD-SHELL", "pg_isready -U postgres"]
+      #test: ['CMD','pg_isready','-q','-d',$$POSTGRES_DB,'-U',$$POSTGRES_PASSWORD]
+      test: ['CMD','pg_isready','-q','-d','c_21_28','-U','postgres']
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 55  
+    networks:
+      c-21-28_network: {}
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "1"
+          memory: 1G
+
+  c-21-28.pg4admin:
+    image: dpage/pgadmin4
+    container_name: c2128_pg4admin
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - 8085:80
+    entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
+    user: root
+    depends_on:
+      - c-21-28.postgres
+    configs:
+      - source: servers.json
+        target: /pgadmin4/servers.json
+      - source: pgpass
+        target: /pgpass
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD=1234 
+      - PGADMIN_DEFAULT_EMAIL=user@c2128.com
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    volumes:
+      - type: bind
+        source:  ./.data/pg4admin
+        target: /var/lib/pgadmin
+        read_only: false
+      - type: bind
+        source:  ./.data/bck
+        target: /home
+        read_only: false
+    networks:
+      c-21-28_network: {}
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "1"
+          memory: 1G
+
+
+  
+   
