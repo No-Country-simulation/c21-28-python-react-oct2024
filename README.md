@@ -3,6 +3,7 @@
 #git config --global http.postBuffer 157286400
 #git config --global http.postBuffer 524288000
 
+git config --global core.autocrlf input
 
 git config --global http.version HTTP/1.1
 git config --global http.postBuffer 524288000  # Set buffer size to 500 MB
