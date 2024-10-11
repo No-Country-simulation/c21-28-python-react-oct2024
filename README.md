@@ -26,6 +26,8 @@ docker-compose build --no-cache
 
 docker-compose up -d
 
+docker container ps
+c-21-28.api_django
 
 React UI
 
