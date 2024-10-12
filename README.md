@@ -1,3 +1,5 @@
+docker compose -f compose.yml up -d c-21-28.django
+
 # c21-28-python-react-oct2024
 
 #git config --global http.postBuffer 157286400
