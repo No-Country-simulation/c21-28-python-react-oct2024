@@ -1,0 +1,454 @@
+networks :
+    c-21-28_network :
+        driver: bridge
+        name: c-21-28_network
+        attachable: true
+        external: false 
+        enable_ipv6: false
+
+
+    api_modules_network :
+        name: apis_modules_network
+        attachable: false
+        external: false
+        enable_ipv6: false
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.10.0.0/16
+
+services:
+
+  c-21-28.busybox:
+        container_name: c-21-28.busybox
+        image: busybox:uclibc #glibc
+        hostname:  busybox
+        restart: always
+        extra_hosts:
+          - 'host.docker.internal:host-gateway'
+        networks:
+          api_modules_network : 
+              ipv4_address: 10.10.0.5
+          c-21-28_network: {}
+        command: tail -f /dev/null
+        deploy:
+          resources:
+              limits:
+                cpus: "0.10"
+                memory: 16M
+              reservations:
+                cpus: "0.05"
+                memory: 8M
+
+  c-21-28.cert-gen:
+    container_name: c-21-28.cert-gen
+    image: alpine
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./.data/certs:/certs
+    hostname: cert-gen
+    networks:
+      c-21-28_network: {}
+#     api_modules_network : 
+#         ipv4_address: 10.10.0.5
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add --no-cache openssl &&
+        openssl genpkey -algorithm RSA -out /certs/mysql/mysql.key -pkeyopt rsa_keygen_bits:2048 &&
+        openssl req -new -key /certs/mysql/mysql.key -out /certs/mysql/mysql.csr -subj "/CN=mysql/O=myorg/C=US" &&
+        openssl x509 -req -in /certs/mysql/mysql.csr -signkey /certs/mysql/mysql.key -out /certs/mysql/mysql.crt -days 365 &&
+        openssl genpkey -algorithm RSA -out /certs/ca.key -pkeyopt rsa_keygen_bits:2048 &&
+        openssl req -new -x509 -key /certs/ca.key -out /certs/ca.crt -days 1095 -subj "/CN=Certificate Authority/O=myorg/C=US" &&
+        chmod 600 /certs/* && chown 999:999 /certs/*
+    restart: "no"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M 
+
+  c-21-28.mysql:
+    container_name: c-21-28.mysql
+    image : mysql:5.7.44
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    restart: always
+    ports: 
+      - ${MYSQL_PORT_IN}:${MYSQL_PORT_OUT}/tcp
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./.data/mysql:/var/lib/mysql
+      - ./.data/logs/mysql:/var/log/mysql
+      - ./.data/bck/mysql:/home 
+      - ./.data/certs/mysql:/etc/mysql/certs
+    env_file:
+      - ./.env
+    command: 
+         - --pid-file=/run/mysqld.pid
+         - --character-set-server=utf8mb4
+         - --collation-server=utf8mb4_unicode_ci
+         - --skip-character-set-client-handshake=1
+         - --explicit_defaults_for_timestamp=ON
+         - --lower_case_table_names=2
+         - --table_definition_cache=400
+         - --performance_schema=0
+         - --default-authentication-plugin=mysql_native_password
+         - --innodb_use_native_aio=0
+         - --tls-version=TLSv1.2
+         - --ssl-ca=/etc/mysql/certs/ca.crt
+         - --ssl-cert=/etc/mysql/certs/mysql.crt
+         - --ssl-key=/etc/mysql/certs/mysql.key
+         - --ssl=1
+         - --bind-address=0.0.0.0
+         - --query_cache_size=16M
+         - --expire_logs_days=10
+         - --default-time-zone=+00:00
+         #- --log_error=/var/log/mysql/error.log 
+         #- --default-time-zone="+03:00"
+    environment:
+      MYSQL_DATABASE : ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} 
+    healthcheck:
+      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$MYSQL_USER --password=$$MYSQL_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      #test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 55
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "0.50"
+          memory: 128M
+ 
+  c-21-28.api_django:
+    container_name: c-21-28.api_django
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    build:
+      context: src/back/api
+      dockerfile_inline: |
+        FROM python:3.12-alpine
+        #
+        ENV PYTHONDONTWRITEBYTECODE 1
+        ENV PYTHONUNBUFFERED 1
+        # 
+        ENV LANG C.UTF-8
+        ENV LC_ALL C.UTF-8
+        #
+        RUN apk update && \
+            apk add --no-cache --virtual .build-deps \
+            bash libc6-compat mc \
+            git bash \
+            ca-certificates gcc mysql-dev linux-headers musl-dev \
+            libffi-dev jpeg-dev zlib-dev  
+        #
+        RUN pip install django djangorestframework djangorestframework-simplejwt django-model-utils
+        # psycopg2-binary 
+        RUN pip install BeautifulSoup4 pandas requests mysql-connector-python  
+        #
+        RUN pip install --upgrade pip
+        RUN pip install pipenv
+        #
+        RUN pip freeze > /home/requirements.txt
+        #
+        #RUN adduser -D python
+        #RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
+        #
+        WORKDIR /home/python/app
+        #USER python
+        #RUN pip install --user pipenv
+        #COPY --chown=python:python . .
+        CMD tail -f /dev/null
+    hostname: api_django
+    #command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    ports: 
+      - ${API_PORT_IN}:${API_PORT_OUT}/tcp
+      - 9229:9229
+      - 9230:9230
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/back/api:/home/python/app/
+      #- ./src/back/home:/home
+    env_file:
+      - ./.env 
+    depends_on:
+      c-21-28.mysql:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./src/back/api
+          target: /home/python/app
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.50"
+          memory: 256M     
+  # Demora. pero la idea es tener uno solo
+  # caso contrario que se utilice el otro compose
+  c-21-28.front.client:
+    build:
+      context: src/front
+      dockerfile_inline: |
+        FROM node:22-alpine        
+        RUN apk update
+        RUN apk add --no-cache bash libc6-compat mc
+        RUN npm install -g npm@10.9.0
+        #
+        RUN mkdir -p /home/apps/admin
+        WORKDIR /home/apps/admin
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/automotriz
+        WORKDIR /home/apps/automotriz
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/cosmetica
+        WORKDIR /home/apps/cosmetica
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        RUN mkdir -p /home/apps/medico
+        WORKDIR /home/apps/medico
+        RUN npm init -y
+        RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        #
+        #RUN npx create-remix@latest /home/apps/admin
+        #RUN npx create-remix@latest /home/apps/automotriz
+        #RUN npx create-remix@latest /home/apps/cosmetica
+        #RUN npx create-remix@latest /home/apps/medico
+        #
+           RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        RUN npm i -D @remix-run/dev vite
+        npm install @types/react @types/react-dom
+        RUN npm install -g react-devtools
+        #
+        WORKDIR /home/apps
+        RUN npm i -g nodemon
+        EXPOSE 3000
+        CMD tail -f /dev/null
+        # nothing pid 1 
+    container_name: c-21-28.fronts
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    stdin_open: true
+    hostname: client  
+    networks:
+      c-21-28_network: {}
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src/front:/home/apps
+      - ./src/front/admin:/home/apps/admin
+      - ./src/front/automotriz:/home/apps/automotriz
+      - ./src/front/cosmetica:/home/apps/cosmetica
+      - ./src/front/medico:/home/apps/medico
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/admin
+          target: /home/apps/admin
+        - action: sync
+          path: ./src/front/automotriz
+          target: /home/apps/automotriz
+        - action: sync
+          path: ./src/front/cosmetica
+          target: /home/apps/cosmetica
+        - action: sync
+          path: ./src/front/medico
+          target: /home/apps/medico
+    depends_on:
+      -  c-21-28.api_django
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M 
+
+  #redis:
+  #rabbit
+  #maildev:  
+  #postgres: 
+  #portainer
+
+  
+  c-21-28.front.admin:
+    build:
+      context: src/front/admin
+      dockerfile_inline: |
+        FROM node:20.18-alpine
+        RUN apk update
+        RUN apk add --no-cache bash libc6-compat mc
+        RUN mkdir -p /home/apps/admin
+        #RUN npm install -g npm nodemon create-react-app @types/react @types/react-dom 
+        #RUN npx create-remix@latest /home/apps/admin
+        #
+        WORKDIR /home/apps/admin
+        #RUN npm i @remix-run/node @remix-run/react @remix-run/serve isbot@4 react react-dom
+        #RUN npm i -D @remix-run/dev vite react-devtools
+        # react react-dom
+        #
+        #CMD ["nodemon", "--exec", "npm", "start"]
+        EXPOSE 3000
+        CMD tail -f /dev/null
+        # nothing pid 1 
+    container_name: c-21-28.admin
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    stdin_open: true
+    hostname: admin  
+    networks:
+      c-21-28_network: {}
+    ports:
+      - 3006:3000
+    volumes:
+      - ./src/front/admin:/home/apps/admin
+      - ./node_modules/admin:/home/apps/admin/node_modules
+    depends_on:
+      -  c-21-28.api_django
+    develop:
+      watch:
+        - action: sync
+          path: ./src/front/admin
+          target: /home/apps/admin
+          ignore:
+            - ./src/front/admin/node_modules/
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.50"
+          memory: 512M   
+
+    # Demora. pero la idea es tener uno solo
+    # caso contrario que se utilice el otro compose
+    c-21-28.front.client:
+      build:
+        context: src/front
+        dockerfile_inline: |
+          FROM node:22-alpine        
+          RUN apk update
+          RUN apk add --no-cache bash libc6-compat mc
+          RUN npm install -g npm@10.9.0
+          RUN npm i -g nodemon
+          WORKDIR /home/apps  
+          #RUN npx create-remix@latest /home/apps/admin
+          #RUN npx create-remix@latest /home/apps/automotriz
+          #RUN npx create-remix@latest /home/apps/cosmetica
+          #RUN npx create-remix@latest /home/apps/medico
+          WORKDIR /home/apps       
+          EXPOSE 3000
+          CMD tail -f /dev/null
+          # nothing pid 1 
+      container_name: c-21-28.fronts
+      logging:
+        options:
+          max-size: 10m
+          max-file: "3"
+      stdin_open: true
+      hostname: client  
+      networks:
+        c-21-28_network: {}
+      ports:
+        - 3000:3000
+      volumes:
+        - ./src/front:/home/apps
+        - ./src/front/admin:/home/apps/admin
+        - ./node_modules/admin:/home/apps/admin/node_modules
+        - ./src/front/automotriz:/home/apps/automotriz
+        - ./node_modules/automotriz:/home/apps/automotriz/node_modules
+        - ./src/front/cosmetica:/home/apps/cosmetica
+        - ./node_modules/cosmetica:/home/apps/cosmetica/node_modules
+        - ./src/front/medico:/home/apps/medico
+        - ./node_modules/medico:/home/apps/medico/node_modules
+      develop:
+        watch:
+          - action: sync
+            path: ./src/front/admin
+            target: /home/apps/admin
+            ignore:
+              - ./src/front/admin/node_modules/
+          - action: sync
+            path: ./src/front/automotriz
+            target: /home/apps/automotriz
+            ignore:
+              - ./src/front/automotriz/node_modules/
+          - action: sync
+            path: ./src/front/cosmetica
+            target: /home/apps/cosmetica
+            ignore:
+              - ./src/front/cosmetica/node_modules/
+          - action: sync
+            path: ./src/front/medico
+            target: /home/apps/medico
+            ignore:
+              - ./src/front/medico/node_modules/
+      depends_on:
+        -  c-21-28.api_django
+      deploy:
+        replicas: 1
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1G
+          reservations:
+            cpus: "0.50"
+            memory: 512M             
+
+   
+
+     
+
+  context: .
+            dockerfile: Dockerfile-service3
+            args:
+                - NODE_ENV=local
+
+                 build:
+      context: ./dir
+      dockerfile: Dockerfile
+      target: prod
