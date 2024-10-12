@@ -150,7 +150,9 @@ services:
     build:
       context: ./src/back/api
       dockerfile: ../../../Dockerfile
-      target: ar_dev_py_django   #    
+      target: ar_dev_py_django   #  
+      args:
+         - API_N=1  
     hostname: api_django
     #command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     restart: always
