@@ -23,5 +23,5 @@ CREATE TABLE IF NOT EXISTS `Contacts` (
   UNIQUE KEY `UQ_Contacts_NamesBirthDate` (`CompanyId`,`FirstName`,`MiddleName`,`LastName`,`BirthDate`),
   KEY `FK_Contacts_GenderId` (`GenderId`),
   CONSTRAINT `FK_Contacts_CompanyId` FOREIGN KEY (`CompanyId`) REFERENCES `Companies` (`CompanyId`),
-  CONSTRAINT `FK_Contacts_GenderId` FOREIGN KEY (`GenderId`) REFERENCES `Genders` (`GenderId`),
+  CONSTRAINT `FK_Contacts_GenderId` FOREIGN KEY (`GenderId`) REFERENCES `Genders` (`GenderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

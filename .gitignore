@@ -1,6 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 .data
 
+#Ignora el entorno virtual 
+reservapp_entorno/
+
 # dependencies
 /node_modules
 /venv
