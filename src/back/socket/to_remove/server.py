@@ -1,11 +1,14 @@
  #!/usr/bin/python3
- from http.server import BaseHTTPRequestHandler, HTTPServer
- import time
- import json
- from socketserver import ThreadingMixIn
- import threading
+
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
+import time
+import json
+import threading
+
 hostName = “0.0.0.0”
- serverPort = 80
+serverPort = 80
+
 class Handler(BaseHTTPRequestHandler):
  def do_GET(self):
  # curl http://<ServerIP>/index.html
@@ -19,6 +22,7 @@ class Handler(BaseHTTPRequestHandler):
 else:
  self.send_response(404)
 return
+
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
  “””Handle requests in a separate thread.”””
 if __name__ == “__main__”:
