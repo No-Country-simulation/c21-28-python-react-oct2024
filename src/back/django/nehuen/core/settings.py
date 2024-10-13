@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,6 +76,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+#os.environ.get("DB__HOST")
+#os.environ.get("DB_DATABASE")
+#os.environ.get("DB_USERNAME")
+#os.environ.get("DB_PASSWORD")
+#os.environ.get("DB_ROOT_PASSWORD")
+#os.environ.get("DB_PORT")
+#os.environ.get("API_PORT") 
 
 DATABASES = {
     'default': {
