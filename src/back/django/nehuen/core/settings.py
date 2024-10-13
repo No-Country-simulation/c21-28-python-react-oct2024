@@ -84,6 +84,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #os.environ.get("DB_ROOT_PASSWORD")
 #os.environ.get("DB_PORT")
 #os.environ.get("API_PORT") 
+#os.environ.get("DJANGO_SQL_ENGINE") 
+#os.environ.get("DJANGO_ALLOWED_HOSTS") 
+#os.environ.get("SECRET_KEY") 
+#os.environ.get("DEBUG") 
+#os.environ.get("LC_LANGUAJE") 
+#os.environ.get("LC_LANG") 
+#os.environ.get("TIME_ZONE") 
+#os.environ.get("DATABASE")  
 
 DATABASES = {
     'default': {
