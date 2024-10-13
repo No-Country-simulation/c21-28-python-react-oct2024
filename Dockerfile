@@ -127,6 +127,7 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     ENV PYTHONDONTWRITEBYTECODE=1
     ENV PYTHONUNBUFFERED=1
     RUN python3 -m venv /opt/venv
+    #RUN source env/bin/activate
     ENV PATH="/opt/venv/bin:$PATH"
     RUN python3 -m ensurepip --upgrade  
     RUN pip3 install --no-cache --upgrade pip setuptools wheel virtualenv
@@ -145,7 +146,7 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
 #################################################
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Django
-# docker build . --target ar_dev_py_env -t ar_dev_py_env
+# docker build . --target ar_dev_py_django -t ar_dev_py_django
 #################################################
 FROM ar_dev_py_env AS ar_dev_py_django
 ENV TZ=America/Argentina/Buenos_Aires
@@ -161,19 +162,19 @@ ENV PYTHONUNBUFFERED=1
 #RUN python3 -m venv /opt/venv corre en ar_dev_py_env
 ENV PATH="/opt/venv/bin:$PATH"
 #
-#RUN mkdir -p /home/upy/app && chown -R upy:upy /home/upy/app
-#RUN adduser -D upy
+RUN adduser -D python
+RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
 #
-RUN python3 -m pip install --upgrade django djangorestframework
+RUN python3 -m pip install --upgrade django djangorestframework djangorestframework-simplejwt
 # mssql-django
-RUN python3 -m pip install --upgrade djangorestframework-simplejwt django-model-utils 
-RUN python3 -m pip install --upgrade django-filter django-ckeditor 
-RUN python3 -m pip install --upgrade Markdown
+RUN python3 -m pip install --upgrade django-model-utils Markdown django-filter
+RUN python3 -m pip install --upgrade django-ckeditor 
 #
-#WORKDIR /home/upy/app
-#USER upy
-#COPY --chown=upy:upy . . 
-#WORKDIR /home/python/app
+RUN pip freeze > /home/python/app/requirements.txt
+#
+WORKDIR /home/python/app
+USER python
+COPY --chown=python:python . . 
 EXPOSE 8000
 EXPOSE 9229
 EXPOSE 9230 

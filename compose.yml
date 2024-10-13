@@ -21,27 +21,6 @@ networks :
 
 services:
 
-  c-21-28.busybox:
-        container_name: c-21-28.busybox
-        image: busybox:uclibc #glibc
-        hostname:  busybox
-        restart: always
-        extra_hosts:
-          - 'host.docker.internal:host-gateway'
-        networks:
-          api_modules_network : 
-              ipv4_address: 10.10.0.5
-          c-21-28_network: {}
-        command: tail -f /dev/null
-        deploy:
-          resources:
-              limits:
-                cpus: "0.10"
-                memory: 16M
-              reservations:
-                cpus: "0.05"
-                memory: 8M
-
   c-21-28.cert-gen:
     container_name: c-21-28.cert-gen
     image: alpine
@@ -87,7 +66,7 @@ services:
         max-file: "3"
     restart: always
     ports: 
-      - ${MYSQL_PORT_IN}:${MYSQL_PORT_OUT}/tcp
+      - ${DB_PORT}:${DB_PORT}/tcp
     networks:
       c-21-28_network: {}
     volumes:
@@ -120,13 +99,13 @@ services:
          #- --log_error=/var/log/mysql/error.log 
          #- --default-time-zone="+03:00"
     environment:
-      MYSQL_DATABASE : ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD} 
+      MYSQL_DATABASE : ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD} 
     healthcheck:
-      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$MYSQL_USER --password=$$MYSQL_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
-      #test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$DB_USERNAME --password=$$DB_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      #test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
       start_period: 5s
       interval: 10s
       timeout: 5s
@@ -141,8 +120,8 @@ services:
           cpus: "0.50"
           memory: 512M   
  
-  c-21-28.django:
-    container_name: api_django
+  c-21-28.shell_django:
+    container_name: c-21-28.shell_django
     logging:
       options:
         max-size: 10m
@@ -151,20 +130,20 @@ services:
       context: ./src/back/api
       dockerfile: ../../../Dockerfile
       target: ar_dev_py_django   #  
-      args:
-         - API_N=1  
-    hostname: api_django
+#      args:
+#         - API_N=1  
+#    hostname: shell_django
     #command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
-    restart: always
+#    restart: always
     ports: 
-      #- ${API_PORT_IN}:${API_PORT_OUT}/tcp
+      #- ${API_PORT}:${API_PORT_OUT}/tcp
       - 8000:8000
       - 9229:9229
       - 9230:9230
     networks:
       c-21-28_network: {}
     volumes:
-      - ./src/back/api:/home/python/app/
+      - ./src/back/services:/home/python/app/
       #- ./src/back/home:/home  
     env_file:
       - ./.env 
@@ -185,181 +164,3 @@ services:
         reservations:
           cpus: "0.50"
           memory: 512M 
-
-  c-21-28.back.shell:
-    container_name: c-21-28.back.shell
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-    build:
-      context: src/back/python
-      dockerfile_inline: |
-        FROM python:3.12-alpine AS base_os
-        # 
-        RUN apk update && \
-            apk add --no-cache --virtual .build-deps \
-            bash libc6-compat \
-            mc git tzdata libsodium curl \
-            ca-certificates gcc mysql-dev linux-headers musl-dev \
-            libffi-dev jpeg-dev zlib-dev
-        # 
-        #################################################
-        #  BASE ALPINE ARGENTINA
-        #################################################
-        FROM base_os AS base_os_ar
-        RUN cp /usr/share/zoneinfo/America/Argentina/Buenos_Aires /etc/localtime
-        #
-        RUN rm -r /usr/share/zoneinfo/Africa && \
-            rm -r /usr/share/zoneinfo/Antarctica && \
-            rm -r /usr/share/zoneinfo/Arctic && \
-            rm -r /usr/share/zoneinfo/Asia && \
-            rm -r /usr/share/zoneinfo/Atlantic && \
-            rm -r /usr/share/zoneinfo/Australia && \
-            rm -r /usr/share/zoneinfo/Europe  && \
-            rm -r /usr/share/zoneinfo/Indian && \
-            rm -r /usr/share/zoneinfo/Mexico && \
-            rm -r /usr/share/zoneinfo/Pacific && \
-            rm -r /usr/share/zoneinfo/Chile && \
-            rm -r /usr/share/zoneinfo/Canada
-        # 
-        RUN echo "America/Argentina/Buenos_Aires" >  /etc/timezone
-        #
-        ENV LANG es_AR.UTF-8
-        ENV LC_ALL es_AR.UTF-8
-        ENV LANGUAGE es_AR.UTF-8
-        RUN python3 -m pip install --upgrade pip setuptools wheel
-        #################################################
-        #  BASE PYTHON Shell
-        #################################################
-        FROM base_os_ar AS py_shell
-        ENV PYTHONDONTWRITEBYTECODE 1
-        ENV PYTHONUNBUFFERED 1
-        RUN adduser -D upy
-        RUN mkdir -p /home/upy/app && chown -R upy:upy /home/upy/app
-        USER upy     
-        WORKDIR /home/upy/app
-        RUN python -m venv /opt/venv
-        ENV PATH="/opt/venv/bin:$PATH"
-        RUN python3 -m pip install --upgrade pika numpy BeautifulSoup4 pandas tensorflow 
-        RUN python3 -m pip install --upgrade mysql-connector-python psycopg2-binary
-        RUN python3 -m pip install --upgrade Pillow psycopg2-binary requests 
-        #################################################
-        #  BASE PYTHON RUNNER 
-        #################################################
-        FROM base_os_ar AS py_runner
-        RUN adduser -D upy
-        RUN mkdir -p /home/upy/app && chown -R upy:upy /home/upy/app
-        USER upy     
-        WORKDIR /home/upy/app
-        COPY --from=py_shell /opt/venv /opt/venv
-        ENV PATH="/opt/venv/bin:$PATH"
-        COPY --chown=upy:upy . /home/upy/app/
-        CMD tail -f /dev/null
-        #CMD ["python", "app.py", ] 
-        #################################################
-        #  INICIO FLASK
-        #################################################
-        
-        #################################################
-        #  FIN FLASK
-        #################################################
-        #################################################
-        #  INICIO Django
-        #################################################
-        FROM py_runner AS django 
-        ENV PYTHONDONTWRITEBYTECODE 1
-        ENV PYTHONUNBUFFERED 1
-        RUN python3 -m pip install --upgrade django djangorestframework mssql-django
-        RUN python3 -m pip install --upgrade djangorestframework-simplejwt django-model-utils 
-        RUN python3 -m pip install --upgrade django-filter django-ckeditor 
-        RUN python3 -m pip install --upgrade Markdown
-        WORKDIR /home/upy/app
-        USER upy
-        COPY --chown=upy:upy . . 
-        EXPOSE 8000
-        CMD tail -f /dev/null
-        #################################################
-        # FIN Django
-        ################################################# 
-        FROM py_runner
-        WORKDIR /home/upy/app
-        USER upy
-        COPY --chown=upy:upy . . 
-        EXPOSE 8000
-        CMD tail -f /dev/null
-    hostname: back.shell
-    #command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
-    restart: always
-    ports: 
-      #- ${API_PORT_IN}:${API_PORT_OUT}/tcp
-      - 8090:8000
-      - 9231:9229
-      - 9232:9230
-    networks:
-      c-21-28_network: {}
-    volumes:
-      - ./src/back/python:/home/python/app/
-    env_file:
-      - ./.env 
-    develop:
-      watch:
-        - action: sync
-          path: ./src/back/python
-          target: /home/python/app
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
-        reservations:
-          cpus: "0.50"
-          memory: 512M   
-  #redis:
-  #rabbit 
-  # docker build --no-cache-filter pyRunner --target pyRunner --tag pyrunner:latest
-  # docker-compose build --no-cache-filter c-21-28.back.shell --target pyRunner --tag 
-  #maildev:  
-  #postgres: 
-  #portainer
-  c-21-28.front.shell:
-    build:
-      context: src/front
-      dockerfile_inline: |
-        FROM node:20.18-alpine
-        RUN apk update
-        RUN apk add --no-cache bash libc6-compat mc
-        WORKDIR /home/apps
-        RUN npm install yarn
-        RUN yarn global add @types/react
-        RUN yarn global add @types/react-dom
-        RUN yarn global add create-react-app
-        EXPOSE 3000
-        CMD tail -f /dev/null
-        # nothing pid 1 
-    container_name: c-21-28.front.shell
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-    stdin_open: true
-    hostname: c-21-28.front.shell  
-    networks:
-      c-21-28_network: {}
-    ports:
-      - 3006:3000
-    volumes:
-      - ./src/front:/home/apps 
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "4"
-          memory: 4G
-        reservations:
-          cpus: "2"
-          memory: 2G  
-
-  
-   
