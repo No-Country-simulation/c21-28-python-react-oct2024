@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `Notes` (
   `Title` varchar(100) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`NoteId`),
   KEY `FK_Notes_CompanyId` (`CompanyId`),
-  KEY `FK_Notes_NoteTypeId` (`NoteTypeId`),
-  CONSTRAINT `FK_Notes_CompanyId` FOREIGN KEY (`CompanyId`) REFERENCES `Companies` (`CompanyId`),
-  CONSTRAINT `FK_Notes_NoteTypeId` FOREIGN KEY (`NoteTypeId`) REFERENCES `NoteTypes` (`NoteTypeId`)
+  #KEY `FK_Notes_NoteTypeId` (`NoteTypeId`),
+  CONSTRAINT `FK_Notes_CompanyId` FOREIGN KEY (`CompanyId`) REFERENCES `Companies` (`CompanyId`)
+  # No existe la tabla NoteTypes CONSTRAINT `FK_Notes_NoteTypeId` FOREIGN KEY (`NoteTypeId`) REFERENCES `NoteTypes` (`NoteTypeId`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
