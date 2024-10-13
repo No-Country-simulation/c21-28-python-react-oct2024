@@ -3,14 +3,14 @@
 # Build 
 docker compose build --no-cache
 docker compose -f compose.yml build --no-cache
-docker compose -f compose.yml build c-21-28.shell_django --no-cache
+docker compose -f compose.yml build nombre --no-cache
 
 # Iniciar
 
 docker compose up -d
 docker compose -f compose.yml up -d
-docker compose -f compose.yml up -d c-21-28.shell_django
-c-21-28.django
+docker compose -f compose.yml up -d nombre
+ 
 # Detener
 
 docker compose down
