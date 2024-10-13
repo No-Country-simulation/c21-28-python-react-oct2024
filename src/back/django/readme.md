@@ -24,7 +24,7 @@ docker compose -f compose.yml down
 docker exec -it c-21-28.django sh
 cd yair
 cd nehuen
-
+hacer xxxxxxxx
 python3 manage.py migrate --noinput
 python manage.py runserver 0.0.0.0:8000
 
