@@ -97,9 +97,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '3307',
         'USER': 'root',
-        'PASSWORD': 'Pampa@sep1',
+        'PASSWORD': '123456789',
         'NAME': 'reservapp',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
