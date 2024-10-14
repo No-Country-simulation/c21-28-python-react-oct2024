@@ -1,6 +1,7 @@
 tuve que modificar el archivo de las credenciales de la base de datos asi que si no les funca es muy problable que sea por eso 🙌
 
->DATABASES = {
+```
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': 'localhost',
@@ -13,7 +14,7 @@ tuve que modificar el archivo de las credenciales de la base de datos asi que si
         }
     }
 }
-
+```
 
 
 ## Docker 
