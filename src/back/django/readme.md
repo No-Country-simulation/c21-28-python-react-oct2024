@@ -1,3 +1,21 @@
+tuve que modificar el archivo de las credenciales de la base de datos asi que si no les funca es muy problable que sea por eso 🙌
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': 'localhost',
+        'PORT': '3307', ---> antes estaba en el 3306
+        'USER': 'root',
+        'PASSWORD': '123456789', ---> y la password es la que tengo en mi base de datos
+        'NAME': 'reservapp',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+    }
+}
+
+
+
 ## Docker 
 
 13-10-2024
