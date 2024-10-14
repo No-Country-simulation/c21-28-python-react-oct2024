@@ -1,4 +1,4 @@
-tuve que modificar el archivo de las credenciales de la base de datos asi que si no les funca es muy problable que sea por eso 🙌
+tuve que modificar el archivo de las credenciales de la base de datos asi que si no les funca es muy probable que sea por eso 🙌
 
 ```
 DATABASES = {
