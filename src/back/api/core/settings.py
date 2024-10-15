@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pm2#09_1mm@ze-b=y(px)uoouk4ey861^yulxj1v_f!o%4z*q1'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") | 'django-insecure-pm2#09_1mm@ze-b=y(px)uoouk4ey861^yulxj1v_f!o%4z*q1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG") | True
 
 ALLOWED_HOSTS = []
 
@@ -77,30 +77,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-#os.environ.get("DB__HOST")
-#os.environ.get("DB_DATABASE")
-#os.environ.get("DB_USERNAME")
-#os.environ.get("DB_PASSWORD")
-#os.environ.get("DB_ROOT_PASSWORD")
-#os.environ.get("DB_PORT")
-#os.environ.get("API_PORT") 
-#os.environ.get("DJANGO_SQL_ENGINE") 
-#os.environ.get("DJANGO_ALLOWED_HOSTS") 
-#os.environ.get("SECRET_KEY") 
-#os.environ.get("DEBUG") 
-#os.environ.get("LC_LANGUAJE") 
-#os.environ.get("LC_LANG") 
-#os.environ.get("TIME_ZONE") 
-#os.environ.get("DATABASE")  
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'PORT': '3307',
-        'USER': 'root',
-        'PASSWORD': '123456789',
-        'NAME': 'reservapp',
+        'ENGINE': os.environ.get("DJANGO_SQL_ENGINE") | 'django.db.backends.mysql',
+        'HOST': os.environ.get("DB_HOST") | 'localhost',
+        'PORT': os.environ.get("DB_PORT") | '3307',
+        'USER': os.environ.get("DB_USERNAME") | 'root',
+        'PASSWORD': os.environ.get("DB_PASSWORD") | '123456789',
+        'NAME': os.environ.get("DB_DATABASE") | 'reservapp',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
@@ -130,9 +114,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = os.environ.get("DJANGO_LANGUAGE_CODE") | 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.environ.get("TIME_ZONE") | 'UTC'
 
 USE_I18N = True
 

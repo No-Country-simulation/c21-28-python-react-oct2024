@@ -155,14 +155,14 @@ services:
           cpus: "0.50"
           memory: 512M 
 
-  c-21-28.django:
-    container_name: django
+  c-21-28.django_api:
+    container_name: django_api
     logging:
       options:
         max-size: 10m
         max-file: "3" 
     build:
-      context: ./src/back/django
+      context: ./src/back/api
       dockerfile: ../../../Dockerfile
       target: ar_dev_py_django
     #command: sh -c "python3 manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
@@ -175,14 +175,14 @@ services:
     networks:
       c-21-28_network: {}
     volumes:
-      - ./src/back/django:/home/python/app
-      - ./env/back/django:/home/python/app/venv
+      - ./src/back/api:/home/python/app
+      - ./env/back/api:/home/python/app/venv
     env_file:
       - ./.env 
     develop:
       watch:
         - action: sync
-          path: ./src/back/django
+          path: ./src/back/api
           target: /home/python/app
     deploy:
       replicas: 1
