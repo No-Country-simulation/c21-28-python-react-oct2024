@@ -53,7 +53,7 @@ services:
         max-file: "3"
     restart: always
     ports: 
-      - ${DB_PORT}:${DB_PORT}/tcp
+      - ${MYSQL_PORT_IN}:${MYSQL_PORT_OUT}/tcp
     networks:
       c-21-28_network: {}
     volumes:
@@ -86,12 +86,12 @@ services:
          #- --log_error=/var/log/mysql/error.log 
          #- --default-time-zone="+03:00"
     environment:
-      MYSQL_DATABASE : ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD} 
+      MYSQL_DATABASE : ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} 
     healthcheck:
-      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$DB_USERNAME --password=$$DB_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$MYSQL_USER --password=$$MYSQL_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
       #test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
       start_period: 5s
       interval: 10s
@@ -115,17 +115,17 @@ services:
         max-file: "3" 
     build: 
       context: ./src/back
-      dockerfile: ../../../Dockerfile
-      target: ar_dev_py_django
+      dockerfile: ../../Dockerfile
+      target: ar_dev_py_env
       args:
         - API_N=1  
     #hostname: django
-    #command: sh -c "python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "tail -f /dev/null"
     restart: always
     ports:  
       - 8001:8000
-      - 9230:9229
-      - 9231:9230
+      - 9235:9235
+      - 9236:9236
     networks:
       c-21-28_network: {}
     volumes:
