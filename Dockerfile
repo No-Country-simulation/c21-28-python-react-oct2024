@@ -70,10 +70,11 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     ENV PATH="$VIRTUAL_ENV/bin:$PATH"
     RUN python3 -m ensurepip --upgrade  
     RUN pip3 install --no-cache --upgrade pip setuptools wheel virtualenv
-    RUN python3 -m pip install --upgrade mysql-connector-python requests
+    RUN python3 -m pip install --upgrade mysql-connector-python 
     RUN python3 -m pip install --upgrade pika numpy BeautifulSoup4 pandas
-    RUN python3 -m pip install --upgrade Pillow  requests  
-    #RUN python3 -m pip install --upgrade pyodbc pymssql pyodbc
+    RUN python3 -m pip install --upgrade Pillow  requests 
+    RUN python3 -m pip install --upgrade django-mysql
+    #RUN python3 -m pip install --upgrade pyodbc pymssql pyodbc mysqlclient django_mysql
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Django
 # docker build . --target ar_dev_py_django -t ar_dev_py_django
