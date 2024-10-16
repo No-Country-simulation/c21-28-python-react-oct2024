@@ -123,7 +123,7 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     #virtualenv
     RUN pip3 install --no-cache --upgrade pip setuptools wheel 
     RUN python3 -m pip install --upgrade pika numpy BeautifulSoup4 pandas
-    RUN python3 -m pip install --upgrade Pillow  requests SQLAlchemy
+    RUN python3 -m pip install --upgrade Pillow  requests 
     RUN python3 -m pip install --upgrade psycopg2-binary 
     RUN python3 -m pip install --upgrade PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
     RUN python3 -m pip install --upgrade pyodbc mysql-connector-python
@@ -146,7 +146,7 @@ RUN python3 -m pip install --upgrade django-ckeditor coreapi
 RUN python3 -m pip freeze > /home/python/app/requirements.txt
 #
 WORKDIR /home/python/app
-#USER python
+USER python
 #COPY --chown=python:python . . 
 #
 EXPOSE 8000

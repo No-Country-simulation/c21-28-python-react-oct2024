@@ -25,7 +25,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") # 'django-insecure-pm2#09_1mm@z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") # True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+#ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = [os.environ.get("DJANGO_ALLOWED_HOSTS")]
 
 
 # Application definition
@@ -79,6 +80,17 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': os.environ.get("DJANGO_SQL_ENGINE"),#'django.db.backends.mysql', # ,
+        'HOST': os.environ.get("DB_HOST"),#'localhost','mysql',#
+        'PORT': os.environ.get("DB_PORT"),#'3306',#
+        'USER': os.environ.get("DB_USERNAME"),#'root',
+        'PASSWORD': os.environ.get("DB_PASSWORD"),#'123456789',
+        'NAME': os.environ.get("DB_DATABASE"),#'reservapp',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+    },    
+    'mysql22': {
         'ENGINE': 'django.db.backends.mysql', # ,
         'HOST': 'localhost',#os.environ.get("DB_HOST")
         'PORT': '3306',#os.environ.get("DB_PORT")
@@ -89,18 +101,7 @@ DATABASES = {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql', # ,
-        'HOST': 'localhost',#os.environ.get("DB_HOST")
-        'PORT': '3306',#os.environ.get("DB_PORT")
-        'USER': 'root',#os.environ.get("DB_USERNAME")
-        'PASSWORD': '123456789',#os.environ.get("DB_PASSWORD"),
-        'NAME': 'reservapp',#os.environ.get("DB_DATABASE")
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
-    },
-    "sql_server": {
+    "sql_server22": {
         "ENGINE": "mssql",
         "NAME": "DATABASE_NAME",
         "USER": "USER_NAME",
@@ -110,7 +111,7 @@ DATABASES = {
         "OPTIONS": {"driver": "ODBC Driver 18 for SQL Server", 
         },
     },
-    'psql': {
+    'psql22': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'DATABASE_NAME',
         'USER': 'USER_NAME',
