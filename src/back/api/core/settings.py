@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
-import pymysql
-pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +25,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") # 'django-insecure-pm2#09_1mm@z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") # True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
@@ -82,14 +80,43 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # ,
-        'HOST': os.environ.get("DB_HOST"), # 'localhost',
-        'PORT': os.environ.get("DB_PORT"),# '3307',
-        'USER': os.environ.get("DB_USERNAME"), # 'root',
-        'PASSWORD': os.environ.get("DB_PASSWORD"), # '123456789',
-        'NAME': os.environ.get("DB_DATABASE"), # 'reservapp',
+        'HOST': 'localhost',#os.environ.get("DB_HOST")
+        'PORT': '3306',#os.environ.get("DB_PORT")
+        'USER': 'root',#os.environ.get("DB_USERNAME")
+        'PASSWORD': '123456789',#os.environ.get("DB_PASSWORD"),
+        'NAME': 'reservapp',#os.environ.get("DB_DATABASE")
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
+    },
+    'mysql': {
+        'ENGINE': 'django.db.backends.mysql', # ,
+        'HOST': 'localhost',#os.environ.get("DB_HOST")
+        'PORT': '3306',#os.environ.get("DB_PORT")
+        'USER': 'root',#os.environ.get("DB_USERNAME")
+        'PASSWORD': '123456789',#os.environ.get("DB_PASSWORD"),
+        'NAME': 'reservapp',#os.environ.get("DB_DATABASE")
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+    },
+    "sql_server": {
+        "ENGINE": "mssql",
+        "NAME": "DATABASE_NAME",
+        "USER": "USER_NAME",
+        "PASSWORD": "PASSWORD",
+        "HOST": "HOST_ADDRESS",
+        "PORT": "1433",
+        "OPTIONS": {"driver": "ODBC Driver 18 for SQL Server", 
+        },
+    },
+    'psql': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'DATABASE_NAME',
+        'USER': 'USER_NAME',
+        'PASSWORD': 'PASSWORD',
+        'HOST': 'HOST_ADDRESS',
+        'PORT': '5432',
     }
 }
 
