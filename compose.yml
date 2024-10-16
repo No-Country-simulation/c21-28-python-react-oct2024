@@ -47,6 +47,7 @@ services:
   c-21-28.mysql:
     container_name: c-21-28.mysql
     image : mysql:5.7.44
+    hostname: mysql
     logging:
       options:
         max-size: 10m
@@ -109,6 +110,7 @@ services:
  
   c-21-28.pyshell:
     container_name: c-21-28.pyshell
+    hostname: shell
     logging:
       options:
         max-size: 10m
@@ -153,6 +155,7 @@ services:
 
   c-21-28.django_api:
     container_name: django_api
+    hostname: api
     logging:
       options:
         max-size: 10m
