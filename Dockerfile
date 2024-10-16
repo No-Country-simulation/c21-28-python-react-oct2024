@@ -134,11 +134,12 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     RUN python3 -m pip install --upgrade pika numpy BeautifulSoup4 pandas
     RUN python3 -m pip install --upgrade Pillow  requests 
     #
-    RUN python3 -m pip install PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
+    RUN python3 -m pip install psycopg2-binary 
     #
-    RUN pip install mysql-connector mysqlclient
-    RUN pip install psycopg2-binary
-#
+    RUN python3 -m pip install PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
+    # no va mysqlclient
+    RUN python3 -m pip install mysql-connector-python
+# 
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Django
 # docker build . --target ar_dev_py_django -t ar_dev_py_django  --no-cache
