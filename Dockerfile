@@ -56,23 +56,6 @@ RUN apk add --allow-untrusted msodbcsql18_18.0.1.1-1_$architecture.apk \
 RUN rm -rf /var/cache/apk/* \
     && apk cache clean    
 # 
-
-#################################################
-# BASE Python-Alpine 
-# docker build . --target python_alpine -t python_alpine  --no-cache
-#################################################
-FROM python:3.12-alpine AS python_alpine
-WORKDIR /usr/src/app
-COPY requirements.txt .
-#
-RUN apk add --no-cache --virtual build-deps gcc musl-dev \ 
-    libffi-dev2 pkgconf mariadb-dev && \
-    apk add --no-cache mariadb-connector-c-dev && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apk del build-deps
-#COPY . .
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD tail -f /dev/null
 #################################################
 # BASE ALPINE-AR 
 # docker build . --target alpine_ar -t alpine-ar  --no-cache
@@ -97,24 +80,32 @@ FROM alpine AS alpine_ar
 #################################################
 FROM alpine_ar AS alpine_ar_dev
 #
-RUN apk add --no-cache --virtual build-deps g++ unixodbc-dev && \
-    apk add --no-cache gcc make libc-dev linux-headers musl-dev && \
-    apk add --no-cache libffi-dev jpeg-dev openssl-dev freetype-dev bzip2-dev zlib-dev && \
-    apk del build-deps
+RUN apk add --update --no-cache --virtual build-deps g++ unixodbc-dev \
+    && apk add --update --no-cache gcc g++ make libc-dev linux-headers musl-dev \
+    && apk add --update --no-cache libffi-dev py-cffi jpeg-dev openssl-dev \ 
+    && apk add --update --no-cache freetype-dev bzip2-dev zlib-dev \
+    && apk add --update --no-cache postgresql-dev postgresql-client \
+    && apk add --update --no-cache mariadb-dev mariadb-connector-c-dev \
+    && apk add --update --no-cache libxslt-dev gettext \
+    && apk add --update --no-cache lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev 
+    
+    #apk del build-deps
+#gcc musl-dev libffi-dev2 pkgconf
+#apk del build-deps
 #
 RUN  rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apk/* \   
     && apk cache clean   
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON 
-# docker build . --target alpine_ar_dev_py -t alpine_ar_dev_py
+# docker build . --target alpine_ar_dev_py -t alpine_ar_dev_py --no-cache
 #################################################
 FROM alpine_ar_dev AS alpine_ar_dev_py
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+#ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED 1
 RUN apk update && \
     apk add --no-cache --virtual .build-deps \ 
-    && apk add --update --no-cache python3 py3-pip \
+    && apk add --update --no-cache python3-dev py3-pip \
     && ln -sf python3 /usr/bin/python \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apk/* \   
@@ -132,13 +123,11 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     #virtualenv
     RUN pip3 install --no-cache --upgrade pip setuptools wheel 
     RUN python3 -m pip install --upgrade pika numpy BeautifulSoup4 pandas
-    RUN python3 -m pip install --upgrade Pillow  requests 
-    #
-    RUN python3 -m pip install psycopg2-binary 
-    #
-    RUN python3 -m pip install PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
-    # no va mysqlclient
-    RUN python3 -m pip install mysql-connector-python
+    RUN python3 -m pip install --upgrade Pillow  requests SQLAlchemy
+    RUN python3 -m pip install --upgrade psycopg2-binary 
+    RUN python3 -m pip install --upgrade PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
+    RUN python3 -m pip install --upgrade pyodbc mysql-connector-python
+    RUN python3 -m pip install --upgrade mysqlclient SQLAlchemy
 # 
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Django
@@ -146,6 +135,7 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
 #################################################
 FROM ar_dev_py_env AS ar_dev_py_django
 #
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN adduser -D python
 RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
 #
@@ -163,7 +153,7 @@ EXPOSE 8000
 EXPOSE 9229
 EXPOSE 9230
 CMD tail -f /dev/null
-
+#################################################
 
 
 
