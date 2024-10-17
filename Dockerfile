@@ -139,7 +139,8 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN adduser -D python
 RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
 #
-RUN python3 -m pip install --upgrade django djangorestframework djangorestframework-simplejwt
+RUN python3 -m pip install --upgrade django==4.1 djangorestframework==3.14 
+RUN python3 -m pip install --upgrade djangorestframework-simplejwt
 RUN python3 -m pip install --upgrade django-model-utils Markdown django-filter
 RUN python3 -m pip install --upgrade django-ckeditor coreapi
 #
