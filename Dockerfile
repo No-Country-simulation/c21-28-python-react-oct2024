@@ -102,7 +102,7 @@ RUN  rm -rf /var/lib/apt/lists/* \
 #################################################
 FROM alpine_ar_dev AS alpine_ar_dev_py
 #ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 RUN apk update && \
     apk add --no-cache --virtual .build-deps \ 
     && apk add --update --no-cache python3-dev py3-pip \
@@ -139,7 +139,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN adduser -D python
 RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
 #
-RUN python3 -m pip install --upgrade django==4.1 djangorestframework==3.14 
+RUN python3 -m pip install --upgrade django djangorestframework 
 RUN python3 -m pip install --upgrade djangorestframework-simplejwt
 RUN python3 -m pip install --upgrade django-model-utils Markdown django-filter
 RUN python3 -m pip install --upgrade django-ckeditor coreapi
@@ -153,20 +153,62 @@ USER python
 EXPOSE 8000
 EXPOSE 9229
 EXPOSE 9230
-CMD tail -f /dev/null
+#CMD ["daphne", "backend.asgi:application", "-b", "0.0.0.0", "-p", $NUXT_PAGE_PORT]
+CMD ["tail","-f","/dev/null"] 
 #################################################
+#################################################
+# BASE ALPINE - AR - DEV - PYTHON - FastApi
+# docker build . --target ar_dev_py_fastapi -t ar_dev_py_fastapi  --no-cache
+#################################################
+FROM ar_dev_py_env AS ar_dev_py_fastapi
+#
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN adduser -D python
+RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
+#
+RUN python3 -m pip install --upgrade  fastapi[all] uvicorn
+#
+RUN python3 -m pip freeze > /home/python/app/requirements.txt
+#
+WORKDIR /home/python/app
+USER python
+#COPY --chown=python:python . . 
+#
+EXPOSE 8000
+EXPOSE 9229
+EXPOSE 9230
+#CMD ["daphne", "backend.asgi:application", "-b", "0.0.0.0", "-p", $NUXT_PAGE_PORT]
+CMD ["tail","-f","/dev/null"]
 
-
-
-
-
-
-
-
-
-
-
-
+#################################################
+#  POSTGRESQL - BookWorm
+#  docker build . --target postgres --tag postgres -t postgres --no-cache 
+#################################################
+FROM postgres:17.0-bookworm AS postgres
+#ENV PGDATA="/var/lib/postgresql/data/c2128/"
+#ENV POSTGRES_DB="admin"
+#ENV POSTGRES_USER="postgres"
+#ENV POSTGRES_PASSWORD="postgres"
+#ENV POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+#ENV POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256" 
+#VOLUME [ "/var/lib/postgresql/data" ]
+#VOLUME [ "/home" ]
+#VOLUME [ "/var/lib/postgresql/data/base/pgsql_tmp"]
+EXPOSE 5432
+#################################################
+#  PGAdmin 4 
+#  docker build . --target pgadmin4 --tag pgadmin4 -t pgadmin4 --no-cache 
+#################################################
+FROM dpage/pgadmin4 AS pgadmin4
+#ENV PGADMIN_DEFAULT_PASSWORD="1234"
+#ENV PGADMIN_DEFAULT_EMAIL="user@pgadmin.com"
+#ENV PGADMIN_CONFIG_SERVER_MODE=false
+#ENV PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=false
+#VOLUME [ "/var/lib/pgadmin4"]
+#VOLUME [ "/usr/local/pgsql-17"]
+#VOLUME [ "/home"] 
+EXPOSE 80
+#https://www.pgadmin.org/docs/pgadmin4/8.11/container_deployment.html
 
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Flask

@@ -79,6 +79,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    'defaultxxxx': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get("POSTGRES_DATABASE"), 
+        'USER': os.environ.get("POSTGRES_USER"), 
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"), 
+        'HOST': os.environ.get("POSTGRES_HOST"), 
+        'PORT': os.environ.get("POSTGRES_PORT_OUT"), 
+    }, 
     'default': {
         'ENGINE': os.environ.get("DJANGO_SQL_ENGINE"),#'django.db.backends.mysql', # ,
         'HOST': os.environ.get("DB_HOST"),#'localhost','mysql',#
@@ -113,11 +121,11 @@ DATABASES = {
     },
     'psql22': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'DATABASE_NAME',
-        'USER': 'USER_NAME',
-        'PASSWORD': 'PASSWORD',
-        'HOST': 'HOST_ADDRESS',
-        'PORT': '5432',
+        'NAME': os.environ.get("POSTGRES_DATABASE"), 
+        'USER': os.environ.get("POSTGRES_USER"), 
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"), 
+        'HOST': os.environ.get("POSTGRES_HOST"), 
+        'PORT': os.environ.get("POSTGRES_PORT_OUT"), 
     }
 }
 

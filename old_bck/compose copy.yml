@@ -23,6 +23,107 @@ configs:
       }}}
 
 services:
+
+  c-21-28.cert-gen:
+    container_name: c-21-28.cert-gen
+    image: alpine
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./.data/certs:/certs
+    hostname: cert-gen
+    networks:
+      c-21-28_network: {}
+#     api_modules_network : 
+#         ipv4_address: 10.10.0.5
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add --no-cache openssl &&
+        openssl genpkey -algorithm RSA -out /certs/mysql/mysql.key -pkeyopt rsa_keygen_bits:2048 &&
+        openssl req -new -key /certs/mysql/mysql.key -out /certs/mysql/mysql.csr -subj "/CN=mysql/O=myorg/C=US" &&
+        openssl x509 -req -in /certs/mysql/mysql.csr -signkey /certs/mysql/mysql.key -out /certs/mysql/mysql.crt -days 365 &&
+        openssl genpkey -algorithm RSA -out /certs/ca.key -pkeyopt rsa_keygen_bits:2048 &&
+        openssl req -new -x509 -key /certs/ca.key -out /certs/ca.crt -days 1095 -subj "/CN=Certificate Authority/O=myorg/C=US" &&
+        chmod 600 /certs/* && chown 999:999 /certs/*
+    restart: "no"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 32M
+        reservations:
+          cpus: "0.25"
+          memory: 16M 
+
+  c-21-28.mysql:
+    container_name: c-21-28.mysql
+    #image : mysql:5.7.44
+    image: mariadb:noble
+    hostname: mysql
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    restart: always
+    ports: 
+      - ${MYSQL_PORT_IN}:${MYSQL_PORT_OUT}/tcp
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./.data/mysql:/var/lib/mysql
+      - ./.data/logs/mysql:/var/log/mysql
+      - ./.data/bck/mysql:/home 
+      - ./.data/certs/mysql:/etc/mysql/certs
+    env_file:
+      - ./.env
+    command: 
+         - --pid-file=/run/mysqld.pid
+         - --character-set-server=utf8mb4
+         - --collation-server=utf8mb4_unicode_ci
+         - --skip-character-set-client-handshake=1
+         - --explicit_defaults_for_timestamp=ON
+         - --lower_case_table_names=2
+         - --table_definition_cache=400
+         - --performance_schema=0
+         - --default-authentication-plugin=mysql_native_password
+         - --innodb_use_native_aio=0
+         - --tls-version=TLSv1.2
+         - --ssl-ca=/etc/mysql/certs/ca.crt
+         - --ssl-cert=/etc/mysql/certs/mysql.crt
+         - --ssl-key=/etc/mysql/certs/mysql.key
+         - --ssl=1
+         - --bind-address=0.0.0.0
+         - --query_cache_size=16M
+         - --expire_logs_days=10
+         - --default-time-zone=+00:00
+         #- --log_error=/var/log/mysql/error.log 
+         #- --default-time-zone="+03:00"
+    environment:
+      MYSQL_DATABASE : ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} 
+    healthcheck:
+      test: out=$$(mysqladmin ping -h localhost -P $$MYSQL_PORT_OUT -u $$MYSQL_USER --password=$$MYSQL_PASSWORD 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+      #test: mysqladmin ping -h 127.0.0.1 -u $$DB_USERNAME --password=$$DB_PASSWORD
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 55
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M 
+        reservations:
+          cpus: "0.25"
+          memory: 128M   
  
   c-21-28.pyshell:
     container_name: c-21-28.pyshell
@@ -48,15 +149,17 @@ services:
       c-21-28_network: {}
     volumes:
       - ./src/back:/home/python/app
-      - ./env/back:/home/python/app/venv
-      - ./.data/tmp:/tmp 
+      - ./env/back:/home/python/app/venv 
     env_file:
       - ./.env 
-    #develop:
-    #  watch:
-    #    - action: sync
-    #      path: ./src/back
-    #      target: /home/python/app
+    depends_on:
+      c-21-28.mysql:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./src/back
+          target: /home/python/app
     deploy:
       replicas: 1
       resources:
@@ -66,7 +169,7 @@ services:
         reservations:
           cpus: "0.50"
           memory: 512M 
-#https://fastapi.tiangolo.com/es/#dependencias-opcionales
+
   c-21-28.services:
     container_name: c-21-28.services
     hostname: services
@@ -89,11 +192,10 @@ services:
     volumes:
       - ./src/back/services:/home/python/app
       - ./env/back/services:/home/python/app/venv 
-      - ./.data/tmp:/tmp 
     env_file:
       - ./.env 
     depends_on:
-      c-21-28.postgres:
+      c-21-28.mysql:
         condition: service_healthy
     develop:
       watch:
@@ -110,51 +212,8 @@ services:
           cpus: "0.50"
           memory: 512M 
 
-#https://docs.python.org/es/3.10/library/socketserver.html#asynchronous-mixins
-  c-21-28.sockets:
-    container_name: c-21-28.sockets
-    hostname: sockets
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3" 
-    build: 
-      context: ./src/back/sockets
-      dockerfile: ../../../Dockerfile
-      target: ar_dev_py_env
-    command: sh -c "tail -f /dev/null"
-    restart: always
-    ports:  
-      - 2375:2375/tcp
-    networks:
-      c-21-28_network: {}
-    volumes:
-      - /var/run/docker.sock.raw:/var/run/docker.sock
-      - ./src/back/sockets:/home/python/app
-      - ./env/back/sockets:/home/python/app/venv 
-      - ./.data/tmp:/tmp
-    env_file:
-      - ./.env 
-    depends_on:
-      c-21-28.postgres:
-        condition: service_healthy
-    develop:
-      watch:
-        - action: sync
-          path: ./src/back/sockets
-          target: /home/python/app
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
-        reservations:
-          cpus: "0.50"
-          memory: 512M 
-
   c-21-28.django_api:
-    container_name: c-21-28.django_api
+    container_name: django_api
     hostname: api
     logging:
       options:
@@ -176,7 +235,6 @@ services:
     volumes:
       - ./src/back/api:/home/python/app
       - ./env/back/api:/home/python/app/venv
-      - ./.data/tmp:/tmp
     env_file:
       - ./.env
     depends_on:
@@ -198,7 +256,7 @@ services:
           memory: 512M
 
   c-21-28.postgres:
-    container_name: c-21-28.postgres
+    container_name: postgres
     hostname: postgres
     restart: on-failure
     logging:
@@ -217,12 +275,10 @@ services:
         POSTGRES_DB: ${POSTGRES_DB}
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
-        POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256" 
     volumes:
       - ./.data/psql:/var/lib/postgresql/data
-      - ./.data/bck/psql:/home
-      - ./.data/tmp:/tmp
+      - ./.data/bck:/home
+      - ./.data/tmp:/var/lib/postgresql/data/base/pgsql_tmp
     healthcheck:
       test: ['CMD','pg_isready','-q','-d','reservapp','-U','postgres']
       start_period: 5s
@@ -244,7 +300,7 @@ services:
       context: ./.data
       dockerfile: ../Dockerfile
       target: pgadmin4
-    container_name: c-21-28.pg4admin
+    container_name: pgadmin4
     logging:
       options:
         max-size: 10m
@@ -268,13 +324,13 @@ services:
       - PGADMIN_CONFIG_SERVER_MODE=False
       - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
     volumes:
-      #- type: bind
-      #  source:  ./.data/pg4admin/pgadmin4.db
-      #  target: /var/lib/pgadmin/pgadmin4.db
-      #  read_only: false
       - type: bind
-        source:  ./.data/tmp
-        target: /tmp
+        source:  ./.data/pg4admin
+        target: /var/lib/pgadmin
+        read_only: false
+      - type: bind
+        source:  ./.data/bck
+        target: /home
         read_only: false
     networks:
       c-21-28_network: {}
