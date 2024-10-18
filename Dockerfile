@@ -207,7 +207,6 @@ FROM dpage/pgadmin4 AS pgadmin4
 #VOLUME [ "/var/lib/pgadmin4"]
 #VOLUME [ "/usr/local/pgsql-17"]
 #VOLUME [ "/home"] 
-EXPOSE 80
 #https://www.pgadmin.org/docs/pgadmin4/8.11/container_deployment.html
 
 #################################################

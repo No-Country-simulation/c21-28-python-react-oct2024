@@ -240,10 +240,11 @@ services:
           memory: 512M  
 
   c-21-28.pg4admin:
-    build:
-      context: ./.data
-      dockerfile: ../Dockerfile
+    build: 
+      context: .
+      dockerfile: Dockerfile
       target: pgadmin4
+    hostname: pg4admin
     container_name: c-21-28.pg4admin
     logging:
       options:
@@ -251,39 +252,30 @@ services:
         max-file: "3"
     ports:
       - 8085:80
-    #entrypoint: /bin/sh -c "chmod **0**600 /pgpass; /entrypoint.sh;"
-    entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
+   # entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
     user: root
     depends_on:
-      c-21-28.postgres:
-        condition: service_healthy 
-    configs:
-      - source: servers.json
-        target: /pgadmin4/servers.json
-      - source: pgpass
-        target: /pgpass
+      - c-21-28.postgres
+    #configs:
+    #  - source: servers.json
+    #    target: /pgadmin4/servers.json
+    #  - source: pgpass
+    #    target: /pgpass
     environment:
       - PGADMIN_DEFAULT_PASSWORD=1234 
       - PGADMIN_DEFAULT_EMAIL=user@pgadmin.com
       - PGADMIN_CONFIG_SERVER_MODE=False
       - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
     volumes:
-      #- type: bind
-      #  source:  ./.data/pg4admin/pgadmin4.db
-      #  target: /var/lib/pgadmin/pgadmin4.db
-      #  read_only: false
-      - type: bind
-        source:  ./.data/tmp
-        target: /tmp
-        read_only: false
+      - ./.data/psql:/var/lib/pg4admin
+      - ./.data/tmp:/tmp  
     networks:
       c-21-28_network: {}
     deploy:
-      replicas: 1
       resources:
         limits:
-          cpus: "1"
-          memory: 1G
+          cpus: "2"
+          memory: 8G
         reservations:
-          cpus: "0.50"
-          memory: 512M  
+          cpus: "1"
+          memory: 4G
