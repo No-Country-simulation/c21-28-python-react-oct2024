@@ -56,6 +56,14 @@ RUN apk add --allow-untrusted msodbcsql18_18.0.1.1-1_$architecture.apk \
 RUN rm -rf /var/cache/apk/* \
     && apk cache clean    
 # 
+#COPY ./tools/shared/rarlinux-5.4.0.tar.gz ./
+#
+RUN wget http://www.rarlab.com/rar/rarlinux-5.4.0.tar.gz  && \
+    tar -xzvf rarlinux-5.4.0.tar.gz && \
+	cd rar && \
+	make && \
+	mv rar /usr/local/bin/rar
+#rar_static    
 #################################################
 # BASE ALPINE-AR 
 # docker build . --target alpine_ar -t alpine-ar  --no-cache
@@ -145,7 +153,7 @@ RUN python3 -m pip install --upgrade django-model-utils Markdown django-filter
 RUN python3 -m pip install --upgrade django-ckeditor coreapi
 #
 RUN python3 -m pip freeze > /home/python/app/requirements.txt
-#
+#coreapi-cli
 WORKDIR /home/python/app
 USER python
 #COPY --chown=python:python . . 
@@ -166,8 +174,14 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN adduser -D python
 RUN mkdir -p /home/python/app && chown -R python:python /home/python/app
 #
-RUN python3 -m pip install --upgrade  fastapi[all] uvicorn
-#
+RUN python3 -m pip install --upgrade  "fastapi[all]" "uvicorn[standard]" 
+RUN python3 -m pip install --upgrade  sqlmodel
+RUN python3 -m pip install --upgrade  "pydantic[email,timezone]"
+RUN python3 -m pip install --upgrade -U pytest copier
+#https://medium.com/@kevinkoech265/a-guide-to-connecting-postgresql-and-pythons-fast-api-from-installation-to-integration-825f875f9f7d
+#https://v2.chakra-ui.com/
+#https://github.com/fastapi/full-stack-fastapi-template
+#https://www.hackveda.in/articles/python-binary-decompilation.html
 RUN python3 -m pip freeze > /home/python/app/requirements.txt
 #
 WORKDIR /home/python/app
