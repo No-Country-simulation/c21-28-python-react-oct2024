@@ -24,6 +24,32 @@ configs:
 
 services:
  
+  c-21-28.front:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: front
+    ports:  
+      - 3001:3001
+      - 9230:9230
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/front/turno:/app
+
+  c-21-28.radstudio:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: radstudio
+    ports:  
+      - 3002:3002
+      - 9231:9231
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/front/radpy:/app
+
   c-21-28.pyshell:
     container_name: c-21-28.pyshell
     hostname: shell
@@ -170,7 +196,6 @@ services:
       #- ${API_PORT}:${API_PORT_OUT}/tcp
       - 8000:8000
       - 9229:9229
-      - 9230:9230
     networks:
       c-21-28_network: {}
     volumes:

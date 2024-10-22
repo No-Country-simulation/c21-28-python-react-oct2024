@@ -21,7 +21,7 @@ FROM alpine:3.20.3 AS alpine
     && apk add --update --no-cache pkgconfig gcompat libstdc++ \
     && apk add --update --no-cache autoconf automake libtool gpg freetds \
     && apk add --update --no-cache sqlite postgresql-client \ 
-    && apk add --update --no-cache mariadb-connector-c      
+    && apk add --update --no-cache mariadb-connector-c make     
     ############
     # VS. CODE #
     ############
@@ -192,66 +192,88 @@ EXPOSE 8000
 EXPOSE 9229
 EXPOSE 9230
 #CMD ["daphne", "backend.asgi:application", "-b", "0.0.0.0", "-p", $NUXT_PAGE_PORT]
-CMD ["tail","-f","/dev/null"]
-
+CMD ["tail","-f","/dev/null"] 
 #################################################
 #  POSTGRESQL - BookWorm
 #  docker build . --target postgres --tag postgres -t postgres --no-cache 
 #################################################
-FROM postgres:17.0-bookworm AS postgres
-#ENV PGDATA="/var/lib/postgresql/data/c2128/"
-#ENV POSTGRES_DB="admin"
-#ENV POSTGRES_USER="postgres"
-#ENV POSTGRES_PASSWORD="postgres"
-#ENV POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
-#ENV POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256" 
-#VOLUME [ "/var/lib/postgresql/data" ]
-#VOLUME [ "/home" ]
-#VOLUME [ "/var/lib/postgresql/data/base/pgsql_tmp"]
+FROM postgres:17.0-bookworm AS postgres 
 EXPOSE 5432
 #################################################
 #  PGAdmin 4 
 #  docker build . --target pgadmin4 --tag pgadmin4 -t pgadmin4 --no-cache 
 #################################################
-FROM dpage/pgadmin4 AS pgadmin4
-#ENV PGADMIN_DEFAULT_PASSWORD="1234"
-#ENV PGADMIN_DEFAULT_EMAIL="user@pgadmin.com"
-#ENV PGADMIN_CONFIG_SERVER_MODE=false
-#ENV PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=false
-#VOLUME [ "/var/lib/pgadmin4"]
-#VOLUME [ "/usr/local/pgsql-17"]
-#VOLUME [ "/home"] 
-#https://www.pgadmin.org/docs/pgadmin4/8.11/container_deployment.html
-
+FROM dpage/pgadmin4 AS pgadmin4 
 #################################################
-# BASE ALPINE - AR - DEV - PYTHON - Flask
-# docker build . --target ar_dev_py_flask -t ar_dev_py_flask
+#  BASE ALPINE - 20.18
+#  docker build . --target nodev20 --tag node:v20 --no-cache 
+#  docker save -o node20.tar  node:v20
 #################################################
-#COPY --from=alpine_ar_dev_py /opt/venv /opt/venv
-#################################################
-#################################################
-# BASE ALPINE - AR - DEV - PYTHON - RUNNER
-# docker build . --target py_runner -t py_runner
-#################################################
-
-
-
-
-#################################################
-#  BASE DEBIAN -latest
-# docker build . --target debian -t debian/base
-#################################################
-FROM debian:trixie-slim AS debian
-#################################################
-# BASE DEBIAN - AR 
-# docker build --target debian -t debian/ar
-#################################################
-FROM debian AS debian_ar
+FROM node:20.18-alpine AS nodev20
+WORKDIR /
+RUN apk update && \
+    apk add --no-cache --virtual .build-deps \
+    && apk upgrade \
+    && apk add ca-certificates \
+    && update-ca-certificates \
+    && apk add --update --no-cache make coreutils && rm -rf /var/cache/apk/*   \ 
+    && apk add --update --no-cache tzdata curl unzip bash wget git libsodium \
+    && apk add --update --no-cache nss libc6-compat vim nano mc \
+    && rm -rf /var/cache/apk/* 
 #
-ENV TZ=America/Argentina/Buenos_Aires
-ENV LANG=es_AR.UTF-8
-ENV LC_ALL=es_AR.UTF-8
-ENV LANGUAGE=es_AR.UTF-8
+#COPY ./tools/shared/rarlinux-5.4.0.tar.gz ./
+#RUN wget http://www.rarlab.com/rar/rarlinux-5.4.0.tar.gz  && \
+# tar -xzvf rarlinux-5.4.0.tar.gz && \#
+#	cd rar && \
+#	make && \
+#	mv rar /usr/local/bin/rar
+#RUN rm -rf rarlinux-5.4.0.tar.gz rar
+#
+RUN mkdir -p /root/.aws/credentials && chmod +rw /root/.aws/credentials 
+RUN mkdir -p /app/dist && chmod +rw /app/dist
+#
+COPY ./tools/front ./installer/tools
+# 
+RUN mkdir -p ./usr/local/lib/node_modules  && chmod +rw /usr/local/lib/node_modules
+RUN chown -R root:$(whoami) /usr/local/lib/node_modules/
+RUN chmod -R 775 /usr/local/lib/node_modules/
+ 
+RUN npm install -g npm --unsafe-perm=true --allow-root
+#RUN npm install -g nodemon --unsafe-perm=true --allow-root
+#RUN npm install -g ts-node --unsafe-perm=true --allow-root
+#RUN npm install -g tslib --unsafe-perm=true --allow-root
+#RUN npm install -g @types/node --unsafe-perm=true --allow-root
+#RUN npm install -g env-cmd --unsafe-perm=true --allow-root
+WORKDIR /app
+RUN npm install yarn
+#RUN yarn create toolpad-app
+#RUN yarn global add @types/react 
+#RUN yarn global add @types/react-dom
+#RUN yarn global add create-react-app
+#EXPOSE 3000-3010
+#EXPOSE 9229-9240
+#CMD ["tail","-f","/dev/null"]
 #################################################
-#  BASE DEBIAN - AR - DEV
+#  BASE ALPINE - 20.18
+#  docker build . --target radstudio --tag radstudio --no-cache 
+#  docker save -o radstudio.tar radstudio
 #################################################
+FROM nodev20 AS radstudio
+WORKDIR /app
+EXPOSE 3002
+EXPOSE 9231
+CMD ["tail","-f","/dev/null"]
+#################################################
+#  BASE ALPINE - 20.18
+#  docker build . --target front --tag front --no-cache 
+#  docker save -o front.tar front
+#################################################
+FROM nodev20 AS front
+WORKDIR /app
+#RUN yarn add @toolpad/core 
+#WORKDIR /app
+#RUN yarn add @mui/material @mui/icons-material @emotion/react @emotion/styled
+#WORKDIR /app
+EXPOSE 3001
+EXPOSE 9230
+CMD ["tail","-f","/dev/null"]
