@@ -1,3 +1,3 @@
 "use strict";
-import { Clock } from "../clock/clock"
+import { Clock } from "clock"
 export default Clock
