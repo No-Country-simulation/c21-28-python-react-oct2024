@@ -142,6 +142,8 @@ REST_FRAMEWORK = {
 }
 #https://stackoverflow.com/questions/5898776/how-to-refer-to-static-files-in-my-css-files
 STATICFILES_DIRS = [
-    BASE_DIR / "static","js","css"
+    BASE_DIR / "static",
     '/var/www/static/',
+    '/var/www/static/css',
+    '/var/www/static/js',
 ]

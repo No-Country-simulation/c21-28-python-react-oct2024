@@ -136,7 +136,6 @@ FROM alpine_ar_dev_py AS ar_dev_py_env
     RUN python3 -m pip install --upgrade PyMySQL PyMySQL[rsa] PyMySQL[ed25519]
     RUN python3 -m pip install --upgrade pyodbc mysql-connector-python
     RUN python3 -m pip install --upgrade mysqlclient SQLAlchemy
-    #pip install "reactpy[fastapi,flask,sanic,starlette,tornado]"
 # 
 #################################################
 # BASE ALPINE - AR - DEV - PYTHON - Django
@@ -155,7 +154,7 @@ RUN python3 -m pip install --upgrade django-ckeditor coreapi
 RUN python3 -m pip install --upgrade crispy-bootstrap5
 RUN python3 -m pip install --upgrade django-crispy-forms
 #pip install "reactpy[starlette]"
-#RUN python3 -m pip install --upgrade pip install reactpy-django
+RUN python3 -m pip install --upgrade pip install reactpy-django
 #
 RUN python3 -m pip freeze > /home/python/app/requirements.txt
 #coreapi-cli
