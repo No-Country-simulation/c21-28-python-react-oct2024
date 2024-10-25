@@ -1,7 +1,11 @@
 from rest_framework import viewsets
 from .serializer import *
-from .models import *
-
+from ReservApp.models import *
+from django.shortcuts import get_object_or_404, redirect, render
+from .forms import  UserRegisterForm
+from django.contrib import messages
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
 
 
@@ -86,3 +90,52 @@ class SupplierplansViewSet(viewsets.ModelViewSet):
 class SuppliersViewSet(viewsets.ModelViewSet):
     queryset = Suppliers.objects.all()
     serializer_class = SuppliersSerializer
+    
+    
+def mostrar_index(request):
+    
+    return render(request,'ReservApp/index.html')    
+    
+def registro_usuario(request):
+    if request.method =="POST":
+        form=UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Registro exitoso!Bienvenido/a')
+            return render(request,'ReservApp/index.html')
+    else:
+        form=UserRegisterForm()
+        
+    return render(request,'ReservApp/registro.html', {'form':form})
+    
+
+def login_request(request):
+    if request.method=="POST":
+        form=AuthenticationForm(request, data=request.POST)
+        
+        if form.is_valid():
+            usuario= form.cleaned_data.get('username')
+            contra= form.cleaned_data.get('password')
+            
+            user= authenticate(username=usuario, password=contra)
+            
+            
+            if user is not None:
+                login(request,user)
+                
+                return render(request,'ReservApp/index.html',{"mensaje":f"Bienvenido {usuario}"})
+            
+            else:
+                return render(request,"ResevApp/index.html",{"mensaje":"Error,datos incorrectos"})
+            
+        else:
+            return render(request,"ResevApp/index.html",{"mensaje":"Error,formulario erroneo"})
+        
+    form = AuthenticationForm()
+    
+    return render(request,"ReservApp/index.html",{'form':form})
+
+
+def logout_request(request):
+    logout(request)
+    return render(request,"ReservApp/index.html",{"mensaje":"Has cerrado sesion exitosamente"})

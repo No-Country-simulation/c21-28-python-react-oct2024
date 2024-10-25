@@ -40,9 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ReservApp',
     'rest_framework',
-    'coreapi'
+    'coreapi',
+    'crispy_forms',
+    'crispy_bootstrap5',
     
 ]
+
+CRISPY_TEMPLATE_PACK= 'bootstrap5'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +63,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'Templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

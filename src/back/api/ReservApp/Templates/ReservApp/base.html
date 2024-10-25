@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ReservApp{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        {% if request.user.is_authenticated %}
+            <h2>Hola, {{ user.username }}</h2>
+            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+        {% else %}
+            <h2>No has iniciado sesión. <a href="{% url 'login' %}">Inicia sesión aquí</a></h2>
+        {% endif %}
+    </div>
+    <br><br><br>
+    
+    <div class="container">
+        {% block codigoDinamico %}
+            <h1>Base</h1>
+        {% endblock %}
+    </div>
+</body>
+</html>
