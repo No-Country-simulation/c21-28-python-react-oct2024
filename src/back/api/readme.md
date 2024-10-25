@@ -1,8 +1,8 @@
 ## Docker 
 
 # Build 
-
-docker compose build c-21-28.mysql c-21-28.django_api --no-cache
+docker compose down
+docker compose build --no-cache
 docker compose -f compose.yml build c-21-28.mysql c-21-28.django_api --no-cache
 docker compose -f compose.yml build --no-cache
 
