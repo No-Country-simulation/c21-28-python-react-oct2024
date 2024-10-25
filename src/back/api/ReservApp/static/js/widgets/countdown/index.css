@@ -1,52 +1,59 @@
-.clock {
-    font-family: sans-serif;
+.expired-notice {
     text-align: center;
-}
-
-.clock-body {
-    background-color: black;
-    margin: 0;
-    padding: 0;
-}
-
-.clock-app {
-    text-align: center;
-    color: white;
-    height: 100vh;
-    width: 100vw;
-}
-
-.clock-timeparent {
+    padding: 2rem;
+    border: 1px solid #ebebeb;
+    border-radius: 0.25rem;
+    margin: 0.5rem;
+  }
+  
+  .expired-notice > span {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: red;
+  }
+  
+  .expired-notice > p {
+    font-size: 1.5rem;
+  }
+  
+  .show-counter {
+    padding: 0.5rem;
+  }
+  
+  .show-counter .countdown-link {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    /*background-color: #ba9fe7; */
-}
-
-.clock-time {
-    color: white;
-    font-size: 70px;
-    position: relative;
-    display: block;
-    margin-top: 45px;
-    color: #d4c5ee;
-}
-
-
-.clock-timecontainer {
-    text-align: center;
-    height: 175px;
-    width: 400px;
-    border: 10px solid rgb(117, 249, 77);
-    border-radius: 20px;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-    background-color: #d4c5ee;
-}
- 
-
-@media only screen and (max-width: 600px) {
-    .clock-timecontainer {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-}
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    padding: 0.5rem;
+    border: 1px solid #ebebeb;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .show-counter .countdown {
+    line-height: 1.25rem;
+    padding: 0 0.75rem 0 0.75rem;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .show-counter .countdown.danger {
+    color: #ff0000;
+  }
+  
+  .show-counter .countdown > p {
+    margin: 0;
+  }
+  
+  .show-counter .countdown > span {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
