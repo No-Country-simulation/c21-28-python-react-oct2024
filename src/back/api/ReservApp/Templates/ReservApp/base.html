@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +12,23 @@
     <script crossorigin src="https://unpkg.com/reactdom@18/umd/react-dom.development.js"></script>
     <script type="text/javascript" src="https://unpkg.com/babel-standalone@6/babel.js"></script>
 </head>
+
 <body>
-    <div class="container">
-        <div id="root">
-        {% if request.user.is_authenticated %}
+    <div class="container" id="root">
+        <div>
+            {% if request.user.is_authenticated %}
             <h2>Hola, {{ user.username }}</h2>
             <a href="{% url 'logout' %}">Cerrar Sesión</a>
-        {% else %}
+            {% else %}
             <h2>No has iniciado sesión. <a href="{% url 'login' %}">Inicia sesión aquí</a></h2>
-        {% endif %}
+            {% endif %}
+        </div>
+        <div class="container">
+            {% block codigoDinamico %}
+            <h1>Base</h1>
+            {% endblock %}
         </div>
     </div>
-    <div class="container">
-        {% block codigoDinamico %}
-            <h1>Base</h1>
-        {% endblock %}
-    </div>
 </body>
+
 </html>

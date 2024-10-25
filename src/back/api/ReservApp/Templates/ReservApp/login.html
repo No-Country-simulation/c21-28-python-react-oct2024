@@ -10,6 +10,17 @@
 {% endblock title %}
 
 {% block codigoDinamico %}
+<script type="text/babel">
+    // Define a component called Greetings
+    function Login() {
+        return <h1>Login!!!</h1>;
+    }
+    // Render the component to the DOM
+    ReactDOM.render(
+        <Login />,
+        document.getElementById("root")
+    );
+</script>
 <br> <br> <br>
 <div class="container text-center">
     <h2>Inicio de Sesión</h2>

@@ -8,6 +8,17 @@
 
 {% block codigoDinamico %}
 <div class="container">
+    <script type="text/babel">
+        // Define a component called Greetings
+        function Welcome() {
+            return <h1>Bienvenido!!!</h1>;
+        }
+        // Render the component to the DOM
+        ReactDOM.render(
+            <Welcome />,
+            document.getElementById("root")
+        );
+    </script>
     <h1>Bienvenidos</h1>
 </div>    
 {% endblock %}
