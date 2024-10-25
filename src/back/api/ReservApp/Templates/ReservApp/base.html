@@ -7,18 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ReservApp{% endblock title %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/reactdom@18/umd/react-dom.development.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/babel-standalone@6/babel.js"></script>
 </head>
 <body>
     <div class="container">
+        <div id="root">
         {% if request.user.is_authenticated %}
             <h2>Hola, {{ user.username }}</h2>
             <a href="{% url 'logout' %}">Cerrar Sesión</a>
         {% else %}
             <h2>No has iniciado sesión. <a href="{% url 'login' %}">Inicia sesión aquí</a></h2>
         {% endif %}
+        </div>
     </div>
-    <br><br><br>
-    
     <div class="container">
         {% block codigoDinamico %}
             <h1>Base</h1>

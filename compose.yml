@@ -24,7 +24,9 @@ configs:
 
 services:
  
-  c-21-28.front:
+  front:
+    container_name: front
+    hostname: front
     build: 
       context: .
       dockerfile: Dockerfile
