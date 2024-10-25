@@ -1,0 +1,13 @@
+.title {
+    flex-grow: 0;
+    margin: 0 44px 0 0;
+    font-family: Poppins;
+    font-size: 19.2px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #000;
+}

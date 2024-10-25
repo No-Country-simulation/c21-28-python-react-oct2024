@@ -26,7 +26,7 @@ class Clock extends React.Component {
         <div className="clock-app">
           <div className="clock-elementcontainer">
             <div className="clock-timeparent">
-              <div className="clock-timecontainer">
+              <div className="clock-timecontainer title">
                 <span className="clock-time">{timeString}</span>
               </div>
             </div>

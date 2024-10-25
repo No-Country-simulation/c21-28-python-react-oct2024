@@ -20,6 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /*background-color: #ba9fe7; */
 }
 
 .clock-time {
@@ -28,8 +29,9 @@
     position: relative;
     display: block;
     margin-top: 45px;
-    color: rgb(117, 249, 77);
+    color: #d4c5ee;
 }
+
 
 .clock-timecontainer {
     text-align: center;
@@ -37,7 +39,10 @@
     width: 400px;
     border: 10px solid rgb(117, 249, 77);
     border-radius: 20px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    background-color: #d4c5ee;
 }
+ 
 
 @media only screen and (max-width: 600px) {
     .clock-timecontainer {
