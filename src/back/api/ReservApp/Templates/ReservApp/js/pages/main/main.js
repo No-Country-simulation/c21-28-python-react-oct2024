@@ -1,5 +1,5 @@
 "use strict";
-import { Clock } from "./widgets/clock/clock";
+import { Clock } from "../../widgets/clock";
 
 class MainReact extends React.Component {
   constructor(props) {
@@ -7,9 +7,9 @@ class MainReact extends React.Component {
   }
 
   render() {
+    //https://codesandbox.io/p/sandbox/digital-clock-smyxfv?file=%2Fsrc%2Findex.js%3A14%2C1
     return (
-        <div>
-            <strong>app.js</strong> is loaded<br/>
+        <div className="main">
             <Clock />
         </div>
     )
