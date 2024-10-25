@@ -15,10 +15,10 @@ export default function App() {
       <h1>Countdown Timer</h1>
 
       <h2>Expires after 3 days!!!</h2>
-      <CountdownTimer targetDate={dateTimeAfterThreeDays} />
+      <CountDownTimer targetDate={dateTimeAfterThreeDays} />
 
       <h2>Expires after 7 days!!!</h2>
-      <CountdownTimer targetDate={dateTimeAfterSevenDays} />
+      <CountDownTimer targetDate={dateTimeAfterSevenDays} />
     </div>
   );
 }

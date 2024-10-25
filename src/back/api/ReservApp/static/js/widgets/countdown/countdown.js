@@ -9,19 +9,29 @@ import './countdown.css';
 const ExpiredNotice = () => {
   return (
     <div className="expired-notice">
-      <span>Expired!!!</span>
-      <p>Please select a future date and time.</p>
+      <span>Tiempo Cumplido !!!</span>
+      <p>Por favor, seleccione el nuevo dia y horario.</p>
     </div>
   );
 };
 
-const ShowCounter = ({ days, hours, minutes, seconds }) => {
+const ShowCounter = ({ days, hours, minutes, seconds, isMinute = true }) => {
+  if (isMinute) {
+    return (
+      <div className="show-counter">
+        <span
+          className="countdown-link"
+        >
+          <DateTimeDisplay value={minutes} type={'Mins'} isDanger={false} />
+          <p>:</p>
+          <DateTimeDisplay value={seconds} type={'Seconds'} isDanger={false} />
+        </span>
+      </div>
+    );
+  }
   return (
     <div className="show-counter">
-      <a
-        href="https://tapasadhikary.com"
-        target="_blank"
-        rel="noopener noreferrer"
+      <span
         className="countdown-link"
       >
         <DateTimeDisplay value={days} type={'Days'} isDanger={days <= 3} />
@@ -31,9 +41,9 @@ const ShowCounter = ({ days, hours, minutes, seconds }) => {
         <DateTimeDisplay value={minutes} type={'Mins'} isDanger={false} />
         <p>:</p>
         <DateTimeDisplay value={seconds} type={'Seconds'} isDanger={false} />
-      </a>
+      </span>
     </div>
-  );
+  ); 
 };
 
 const CountDownTimer = ({ targetDate }) => {
@@ -96,4 +106,4 @@ const getReturnValues = (countDown) => {
 };
 
 
-export {CountDownTimer, useCountDown , DateTimeDisplay}
+export { CountDownTimer, useCountDown, DateTimeDisplay }
