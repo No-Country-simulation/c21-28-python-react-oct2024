@@ -140,3 +140,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
+#https://stackoverflow.com/questions/5898776/how-to-refer-to-static-files-in-my-css-files
+STATICFILES_DIRS = [
+    BASE_DIR / "static","js","css"
+    '/var/www/static/',
+]
