@@ -38,3 +38,5 @@ class Clock extends React.Component {
 }
 
 customElements.define('clock', Clock);
+
+export default Clock
