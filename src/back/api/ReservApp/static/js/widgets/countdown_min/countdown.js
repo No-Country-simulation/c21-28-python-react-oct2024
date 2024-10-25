@@ -2,6 +2,7 @@ import React from 'react';
 import DateTimeDisplay from './DateTimeDisplay';
 import { useCountdown } from './hooks/useCountdown';
 import { useEffect, useState } from 'react';
+import './countdown.css';
 
 /*********************************************/
 
