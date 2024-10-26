@@ -18,7 +18,8 @@ from django.urls import path,include,re_path
 from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
+    
     path('admin/', admin.site.urls),
-    path('ReservApp/',include('ReservApp.urls')),
+    re_path('',include('ReservApp.urls')),
     path('docs/',include_docs_urls(title='ReservApp Documentation'))
 ]

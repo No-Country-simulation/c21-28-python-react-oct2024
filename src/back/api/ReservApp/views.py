@@ -126,14 +126,14 @@ def login_request(request):
                 return render(request,'ReservApp/index.html',{"mensaje":f"Bienvenido {usuario}"})
             
             else:
-                return render(request,"ResevApp/index.html",{"mensaje":"Error,datos incorrectos"})
+                return render(request,"ResevApp/login.html",{"mensaje":"Error,datos incorrectos"})
             
         else:
-            return render(request,"ResevApp/index.html",{"mensaje":"Error,formulario erroneo"})
+            return render(request,"ResevApp/login.html",{"mensaje":"Error,formulario erroneo"})
         
     form = AuthenticationForm()
     
-    return render(request,"ReservApp/index.html",{'form':form})
+    return render(request,"ReservApp/login.html",{'form':form})
 
 
 def logout_request(request):
