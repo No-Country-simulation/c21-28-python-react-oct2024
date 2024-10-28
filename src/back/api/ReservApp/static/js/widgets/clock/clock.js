@@ -1,6 +1,8 @@
 "use strict";
-import { useState } from "react";
-import "./clock.css";
+//const [open, setOpen] = React.useState(false);
+
+//import { useState } from "react";
+//import "./clock.css";
 
 class Clock extends React.Component {
   constructor(props) {
@@ -8,18 +10,18 @@ class Clock extends React.Component {
   }
   render() {
     const culture = 'es-AR';//'en-GB';
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = React.useState(new Date());
     useEffect(() => {
       const timerID = setInterval(() => tick(), 1000);
       return () => clearInterval(timerID);
     }, []);
 
-    const tick = useCallback(() => {
+    const tick = React.useCallback(() => {
       setDate(new Date());
     }, []);
 
     const options = { hour: "2-digit", minute: "2-digit", hour12: false };
-    const timeString = useMemo(() => date.toLocaleTimeString(culture, options), [date]);
+    const timeString = React.useMemo(() => date.toLocaleTimeString(culture, options), [date]);
 
     return (
       <div className="clock-body">
@@ -39,4 +41,4 @@ class Clock extends React.Component {
 
 customElements.define('clock', Clock);
 
-export default Clock
+//export default Clock
