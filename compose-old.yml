@@ -24,6 +24,77 @@ configs:
 
 services:
  
+  front:
+    container_name: front
+    hostname: front
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: front
+    ports:  
+      - 3001:3001
+      - 9230:9230
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/front/turno:/app
+
+  c-21-28.radstudio:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: radstudio
+    ports:  
+      - 3002:3002
+      - 9231:9231
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/front/radpy:/app
+
+  c-21-28.pyshell:
+    container_name: c-21-28.pyshell
+    hostname: shell
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3" 
+    build: 
+      context: ./src/back
+      dockerfile: ../../Dockerfile
+      target: ar_dev_py_env
+      args:
+        - API_N=1  
+    #hostname: django
+    command: sh -c "tail -f /dev/null"
+    restart: always
+    ports:  
+      - 8001:8000
+      - 9235:9235
+      - 9236:9236
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - ./src/back:/home/python/app
+      - ./env/back:/home/python/app/venv
+      - ./.data/tmp:/tmp 
+    env_file:
+      - ./.env 
+    #develop:
+    #  watch:
+    #    - action: sync
+    #      path: ./src/back
+    #      target: /home/python/app
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.50"
+          memory: 512M 
+#https://fastapi.tiangolo.com/es/#dependencias-opcionales
   c-21-28.services:
     container_name: c-21-28.services
     hostname: services
@@ -66,7 +137,50 @@ services:
         reservations:
           cpus: "0.50"
           memory: 512M 
- 
+
+#https://docs.python.org/es/3.10/library/socketserver.html#asynchronous-mixins
+  c-21-28.sockets:
+    container_name: c-21-28.sockets
+    hostname: sockets
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3" 
+    build: 
+      context: ./src/back/sockets
+      dockerfile: ../../../Dockerfile
+      target: ar_dev_py_env
+    command: sh -c "tail -f /dev/null"
+    restart: always
+    ports:  
+      - 2375:2375/tcp
+    networks:
+      c-21-28_network: {}
+    volumes:
+      - /var/run/docker.sock.raw:/var/run/docker.sock
+      - ./src/back/sockets:/home/python/app
+      - ./env/back/sockets:/home/python/app/venv 
+      - ./.data/tmp:/tmp
+    env_file:
+      - ./.env 
+    depends_on:
+      c-21-28.postgres:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./src/back/sockets
+          target: /home/python/app
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.50"
+          memory: 512M 
+
   c-21-28.django_api:
     container_name: c-21-28.django_api
     hostname: api
