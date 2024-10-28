@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-    Home Page   
+Home Page
 {% endblock title %}
 
 {% block codigoDinamico %}
@@ -11,10 +11,13 @@
 
 <head>
     <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
+    <script type="text/babel" src="{% static 'js/turno.js' %}"></script>
 </head>
 
 <div class="container">
     <h1>Turno</h1>
     <h2>Hola, {{ user.username }}</h2>
-</div>    
+    <main id="application"></main>
+</div>
+
 {% endblock %}

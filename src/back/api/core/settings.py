@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+#import mimetypes
 
+#mimetypes.add_type("text/javascript", ".js", True)
+#mimetypes.add_type("application/javascript", ".css", True)
+#mimetypes.add_type("text/css", ".css", True)
+ 
 SESSION_COOKIE_AGE = 1209600  # 2 semanas, ajusta según lo necesites
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Mantener la sesión activa después de cerrar el navegador
 
