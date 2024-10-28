@@ -1,24 +1,17 @@
-{% extends 'ReservApp/base.html' %}
-
-{% load static %}
-
-{% block title %}
-    Home Page   
-{% endblock title %}
-
+{% load static %} 
 {% block codigoDinamico %}
-<div class="container">
-    <script type="text/babel">
-        // Define a component called Greetings
-        function Welcome() {
-            return <h1>Bienvenido!!!</h1>;
-        }
-        // Render the component to the DOM
-        ReactDOM.render(
-            <Welcome />,
-            document.getElementById("root")
-        );
-    </script>
-    <h1>Bienvenidos</h1>
-</div>    
+
+<head>
+  <link rel="stylesheet" href="{% static 'css/style_index.css' %}" />
+</head>
+<div class="Home-HI-FI">
+  <div class="container">
+    <h1 class="titulo">Bienvenidos</h1>
+  </div>
+
+  <div class="Frame-24">
+    <a class="Iniciar-sesin" href="{% url 'login' %}"> Iniciar sesión </a>
+  </div>
+</div>
+
 {% endblock %}

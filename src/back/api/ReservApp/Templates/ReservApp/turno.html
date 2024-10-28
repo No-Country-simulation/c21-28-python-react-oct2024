@@ -7,18 +7,14 @@
 {% endblock title %}
 
 {% block codigoDinamico %}
+
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
+</head>
+
 <div class="container">
-    <script type="text/babel">
-        // Define a component called Greetings
-        function Welcome() {
-            return <h1>turno!!!</h1>;
-        }
-        // Render the component to the DOM
-        ReactDOM.render(
-            <Welcome />,
-            document.getElementById("root")
-        );
-    </script>
-    <h1>Bienvenidos</h1>
+    <h1>Turno</h1>
+    <h2>Hola, {{ user.username }}</h2>
 </div>    
 {% endblock %}
