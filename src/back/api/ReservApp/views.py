@@ -164,6 +164,8 @@ def logout_request(request):
     return render(request,"ReservApp/index.html",{"mensaje":"Has cerrado sesion exitosamente"})
 
     
-def mostrar_turno(request):
-    
+def mostrar_turno(request):    
     return render(request,'ReservApp/turno.html')   
+
+def ver_turnos(request):    
+    return render(request,'ReservApp/turnos.html')   

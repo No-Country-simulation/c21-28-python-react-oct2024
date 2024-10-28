@@ -30,5 +30,6 @@ urlpatterns = [
     path('registro/',views.registro_usuario,name='Registro'),
     path('login/',views.login_request, name='login'),
     path('logout/',views.logout_request, name='logout'),
-    path('turno/',views.mostrar_turno, name='turno')
+    path('turno/',views.mostrar_turno, name='turno'),
+    path('turnos/',views.ver_turnos, name='turnos')
 ]
