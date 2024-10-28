@@ -78,7 +78,7 @@ services:
       context: ./src/back/api
       dockerfile: ../../../Dockerfile
       target: ar_dev_py_django
-    command: sh -c "python3 manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python3 manage.py migrate --noinput && python3 manage.py makemigrations --noinput && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports: 
       #- ${API_PORT}:${API_PORT_OUT}/tcp

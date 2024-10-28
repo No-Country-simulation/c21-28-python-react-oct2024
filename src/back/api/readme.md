@@ -34,8 +34,8 @@ docker volume prune
 
 # 
 python3 manage.py migrate 
-python3 manage.py makemigrate 
-python3 manage.py runserver 0.0.0.0:8000
+python3 manage.py makemigrations 
+python3 manage.py runserver localhost:8000
 
 #
 https://www.okteto.com/blog/how-to-develop-django-and-postgres-applications-with-docker-and-okteto-cli-2-0/
