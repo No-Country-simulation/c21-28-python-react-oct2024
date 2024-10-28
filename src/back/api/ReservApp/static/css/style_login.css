@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+.text_iniciar_sesion {
+  color: #000;
+  font-size: 40px; /* Tamaño de fuente */
+  margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.container {
+  display: flex;
+  height: 100%;
+}
+
+.left-side {
+  background-color: white;
+  flex: 1; /* Ocupa la mitad izquierda */
+  display: flex; /* Usar flexbox para centrar contenido */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+}
+
+.right-side {
+  background-color: #ba9fe7; /* Color lila */
+  flex: 1; /* Ocupa la mitad derecha */
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+}
+
+.login-form {
+  text-align: center; /* Centra el texto */
+  width: 300px; /* Ancho del formulario */
+}
+
+.login-form h2 {
+  margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.login-form input {
+  width: 100%; /* Ancho completo */
+  padding: 10px; /* Espaciado interno */
+  margin-bottom: 15px; /* Espaciado entre inputs */
+  border: 1px solid #ccc; /* Borde del input */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+.login-form button {
+  width: 100%; /* Ancho completo */
+  padding: 10px; /* Espaciado interno */
+  background-color: #0056b3; /* Color de fondo del botón */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  transition: background-color 0.3s; /* Transición para el hover */
+}
+
+.login-form button:hover {
+  background-color: #004494; /* Color de fondo al pasar el mouse */
+}
+
+.coolinput {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  position: static;
+  max-width: 240px;
+}
+
+.coolinput label.text {
+  font-size: 0.75rem;
+  color: #818cf8;
+  font-weight: 700;
+  position: relative;
+  top: 0.5rem;
+  margin: 0 0 0 7px;
+  padding: 0 3px;
+  background: #ffffff;
+  width: fit-content;
+}
+
+.coolinput input[type='text'].input {
+  padding: 11px 40px;
+  font-size: 0.75rem;
+  border: 2px #818cf8 solid;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.coolinput input[type='text'].input:focus {
+  outline: none;
+}
+
+.form-login{
+    text-decoration-color: yellowgreen;
+}
+
+#id_username {
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Espaciado interno */
+    margin-bottom: 15px; /* Espaciado entre inputs */
+    border: 1px solid #ccc; /* Borde del input */
+    border-radius: 5px; /* Bordes redondeados */
+}
+/* Media query para asegurar la responsividad */
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column; /* Cambia a vertical en pantallas pequeñas */
+  }
+
+  .left-side,
+  .right-side {
+    height: 50%; /* Cada mitad ocupa la mitad de la altura */
+  }
+}

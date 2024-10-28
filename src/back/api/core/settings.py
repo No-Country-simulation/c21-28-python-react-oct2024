@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+SESSION_COOKIE_AGE = 1209600  # 2 semanas, ajusta según lo necesites
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Mantener la sesión activa después de cerrar el navegador
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

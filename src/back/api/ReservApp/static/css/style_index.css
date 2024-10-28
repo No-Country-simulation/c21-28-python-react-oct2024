@@ -1,0 +1,42 @@
+body {
+    background-color: #f4f4f4; /* Fondo gris claro */
+    font-family: Arial, sans-serif; /* Fuente limpia y profesional */
+    margin: 0; /* Elimina el margen por defecto */
+    padding: 0; /* Elimina el padding por defecto */
+    position: relative; /* Necesario para posicionar elementos absolutos */
+}
+
+.Home-HI-FI {
+    position: relative; /* Para contener el botón de iniciar sesión */
+}
+
+.container {
+    text-align: center; /* Centra el contenido dentro de la caja */
+    margin-top: 50px;  /* Espaciado superior */
+}
+
+.titulo {
+    font-size: 2em;     /* Tamaño del texto */
+    margin-bottom: 20px; /* Espaciado inferior */
+    color: #333;        /* Color del texto */
+}
+
+.Frame-24 {
+    position: absolute; /* Permite posicionar este elemento de forma independiente */
+    top: 20px; /* Espaciado desde la parte superior */
+    right: 20px; /* Espaciado desde el lado derecho */
+}
+
+.Iniciar-sesin {
+    display: inline-block; /* Hace que el enlace se comporte como un bloque */
+    padding: 10px 20px;   /* Espaciado interno */
+    background-color: #0056b3; /* Color de fondo del botón */
+    color: white;         /* Color del texto */
+    text-decoration: none; /* Quita el subrayado */
+    border-radius: 5px;   /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición para el hover */
+}
+
+.Iniciar-sesin:hover {
+    background-color: #004494; /* Color de fondo al pasar el mouse */
+}

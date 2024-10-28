@@ -6,6 +6,7 @@ from .forms import  UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.decorators.csrf import csrf_protect
 # Create your views here.
 
 
@@ -108,7 +109,7 @@ def registro_usuario(request):
         
     return render(request,'ReservApp/registro.html', {'form':form})
     
-
+@csrf_protect
 def login_request(request):
     if request.method=="POST":
         form=AuthenticationForm(request, data=request.POST)
@@ -123,7 +124,7 @@ def login_request(request):
             if user is not None:
                 login(request,user)
                 
-                return render(request,'ReservApp/index.html',{"mensaje":f"Bienvenido {usuario}"})
+                return render(request,'ReservApp/turno.html',{"mensaje":f"Bienvenido {usuario}"})
             
             else:
                 return render(request,"ResevApp/login.html",{"mensaje":"Error,datos incorrectos"})
@@ -134,6 +135,28 @@ def login_request(request):
     form = AuthenticationForm()
     
     return render(request,"ReservApp/login.html",{'form':form})
+# def login_request(request):
+#     if request.method == "POST":
+#         form = AuthenticationForm(request, data=request.POST)
+
+#         if form.is_valid():
+#             usuario = form.cleaned_data.get('username')
+#             contra = form.cleaned_data.get('password')
+
+#             user = authenticate(username=usuario, password=contra)
+
+#             if user is not None:
+#                 login(request, user)
+#                 #return redirect(request,'index.html', {"mensaje": f"Bienvenido {usuario}"})
+#                 return render(request, 'ReservApp/index.html', {"mensaje": f"Bienvenido {usuario}"})
+#             else:
+#                 return render(request, "ReservApp/login.html", {"form": form, "mensaje": "Error: usuario o contraseña incorrectos."})
+
+#         else:
+#             return render(request, "ReservApp/login.html", {"form": form, "mensaje": "Error: formulario erróneo."})
+
+#     form = AuthenticationForm()
+#     return render(request, "ReservApp/login.html", {'form': form})
 
 
 def logout_request(request):

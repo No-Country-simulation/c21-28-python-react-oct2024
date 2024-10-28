@@ -11,7 +11,7 @@ docker compose -f compose.yml build --no-cache
 docker compose up -d c-21-28.mysql c-21-28.django_api
 docker compose -f compose.yml up -d c-21-28.django_api
 docker compose -f compose.yml up -d
-
+docker compose up -d c-21-28.django_api
  
 # Detener
 
