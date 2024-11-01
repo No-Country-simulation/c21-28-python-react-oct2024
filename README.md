@@ -2,7 +2,7 @@
 
 Proyecto: RecetApp
 
-![Loguito]<img src="tools/assets/logo-reservapp.svg" alt="Loguito" width="200"/>
+<img src="tools/assets/logo-reservapp.svg" alt="Loguito" width="200"/>
 
 
 Versión: 1.0
