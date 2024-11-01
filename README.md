@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NoCountry: C20-48-t-Python-React
 
 Proyecto: RecetApp
@@ -45,3 +46,8 @@ Aplicación web responsiva diseñada para facilitar el acceso a servicios médic
 <br>
 <h3>Vista "Turno"</h3>
 <img width="400" height= "250" src="tools/assets/turno.png" alt="vista segundaria Recetapp" />
+=======
+Cohorte 21-28 Python React
+https://dashboard.render.com/register
+Reservate App
+>>>>>>> 3f0309a781ea21dd2d76ac92a03df88f98364dae

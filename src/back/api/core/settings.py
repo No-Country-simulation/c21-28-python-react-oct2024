@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+#import mimetypes
 
+#mimetypes.add_type("text/javascript", ".js", True)
+#mimetypes.add_type("application/javascript", ".css", True)
+#mimetypes.add_type("text/css", ".css", True)
+ 
 SESSION_COOKIE_AGE = 1209600  # 2 semanas, ajusta según lo necesites
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Mantener la sesión activa después de cerrar el navegador
 
@@ -143,10 +148,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
+#STATICFILES_DIRS = [
+#    BASE_DIR / "static",
+#]
+
 #https://stackoverflow.com/questions/5898776/how-to-refer-to-static-files-in-my-css-files
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    '/var/www/static/',
-    '/var/www/static/css',
-    '/var/www/static/js',
-]
+#STATICFILES_DIRS = [
+#    BASE_DIR / "static",
+#    '/var/www/static/',
+#    '/var/www/static/css',
+#    '/var/www/static/js',
+#]

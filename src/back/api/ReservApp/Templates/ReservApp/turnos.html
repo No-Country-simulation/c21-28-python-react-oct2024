@@ -1,0 +1,34 @@
+{% extends 'ReservApp/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock title %}
+
+{% block codigoDinamico %}
+
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/react-calendar@5.1.0/dist/cjs/index.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/react-calendar@5.1.0/dist/Calendar.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/zh-cn.js"></script>
+    <script>dayjs.locale('es')</script>
+    
+    https://dev.to/martinpersson/react-material-ui-create-a-dynamic-calendar-with-integrated-todos-6cm
+    https://day.js.org/docs/en/i18n/loading-into-browser
+    https://medium.com/@kapaak/custom-calendar-with-react-and-dayjs-dcdbba89e577
+
+    <link rel="stylesheet" href="{% static 'js/widgets/calendar.css' %}" />
+    <script type="text/babel" src="{% static 'js/widgets/calendar.js' %}"></script>
+</head>
+
+<div class="container">
+    <h1>Turno</h1>
+    <h2>Hola, {{ user.username }}</h2>
+    <main id="application"></main>
+</div>
+
+{% endblock %}

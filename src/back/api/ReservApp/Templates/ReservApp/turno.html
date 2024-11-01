@@ -2,10 +2,16 @@
 {% load static %}
 {% block title %}
 Home Page
+<<<<<<< HEAD
 {%endblock title %}
+=======
+{% endblock title %}
+
+>>>>>>> 3f0309a781ea21dd2d76ac92a03df88f98364dae
 {% block codigoDinamico %}
 
 <head>
+<<<<<<< HEAD
   <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
   <script>
@@ -148,3 +154,27 @@ Home Page
   <div id="calendar"></div>
 </div>
 {% endblock %}
+=======
+    <script src="https://cdn.jsdelivr.net/npm/react-calendar@5.1.0/dist/cjs/index.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/react-calendar@5.1.0/dist/Calendar.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
+    
+    <script type="text/babel" src="{% static 'js/widgets/clock.js' %}"></script>
+    <script type="text/babel" src="{% static 'js/widgets/countdown.js' %}"></script>
+   
+    
+    <link rel="stylesheet" href="{% static 'js/widgets/clock.css' %}" />
+    <link rel="stylesheet" href="{% static 'js/widgets/countdown.css' %}" />
+  
+    <script type="text/babel" src="{% static 'js/turno.js' %}"></script>
+</head>
+
+<div class="container">
+    <h1>Turno</h1>
+    <h2>Hola, {{ user.username }}</h2>
+    <main id="application"></main>
+</div>
+
+{% endblock %}
+>>>>>>> 3f0309a781ea21dd2d76ac92a03df88f98364dae
