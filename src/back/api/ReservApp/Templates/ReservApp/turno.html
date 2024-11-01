@@ -1,20 +1,150 @@
 {% extends 'ReservApp/base.html' %}
-
 {% load static %}
-
 {% block title %}
-    Home Page   
-{% endblock title %}
-
+Home Page
+{%endblock title %}
 {% block codigoDinamico %}
 
-
 <head>
-    <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/style_turno.css' %}" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        selectMirror: true,
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'timeGridWeek,timeGridDay',
+        },
+        slotMinTime: '08:00:00', // Hora mínima (8:00 AM)
+        slotMaxTime: '20:00:00', // Hora máxima (8:00 PM)
+        slotDuration: '00:30:00', // Duración de cada intervalo (30 minutos)
+        events: [],
+        eventClick: function (info) {
+          if (info.event.backgroundColor === 'green') {
+            // Cambia a amarillo si el turno está disponible (verde)
+            info.event.setProp('backgroundColor', 'yellow');
+            info.event.setProp('borderColor', 'yellow');
+            alert(
+              'Has solicitado el turno para el horario: ' +
+                info.event.start.toLocaleString()
+            );
+          } else if (info.event.backgroundColor === 'yellow') {
+            // Cambia de vuelta a verde si el turno ya estaba seleccionado (amarillo)
+            info.event.setProp('backgroundColor', 'green');
+            info.event.setProp('borderColor', 'green');
+            alert(
+              'Has deseleccionado el turno para el horario: ' +
+                info.event.start.toLocaleString()
+            );
+          } else {
+            alert('Este horario ya está ocupado. Elige otro turno.');
+          }
+        },
+      });
+      calendar.render();
+      // Función para cargar los horarios según la especialidad
+      function cargarHorarios(especialidad) {
+        // Limpia el calendario
+        calendar.removeAllEvents();
+
+        // Define los horarios según la especialidad
+        var eventosEspecialidad = {
+          Cardiología: [
+            {
+              title: 'Disponible',
+              start: '2024-10-30T10:00:00',
+              end: '2024-10-30T10:30:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+            {
+              title: 'Disponible',
+              start: '2024-10-30T11:00:00',
+              end: '2024-10-30T11:30:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+          ],
+          Neurología: [
+            {
+              title: 'Disponible',
+              start: '2024-10-31T09:00:00',
+              end: '2024-10-31T09:30:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+            {
+              title: 'Disponible',
+              start: '2024-10-31T12:00:00',
+              end: '2024-10-31T12:30:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+          ],
+          Dermatología: [
+            {
+              title: 'Disponible',
+              start: '2024-11-01T08:30:00',
+              end: '2024-11-01T09:00:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+            {
+              title: 'Disponible',
+              start: '2024-11-01T10:30:00',
+              end: '2024-11-01T11:00:00',
+              backgroundColor: 'green',
+              borderColor: 'green',
+            },
+          ],
+        };
+
+        // Cargar eventos en el calendario para la especialidad seleccionada
+        if (eventosEspecialidad[especialidad]) {
+          eventosEspecialidad[especialidad].forEach((event) => calendar.addEvent(event));
+        }
+      }
+
+      // Asigna la función de carga a cada botón
+      document.getElementById('btnCardiologia').onclick = function () {
+        cargarHorarios('Cardiología');
+      };
+      document.getElementById('btnNeurologia').onclick = function () {
+        cargarHorarios('Neurología');
+      };
+      document.getElementById('btnDermatologia').onclick = function () {
+        cargarHorarios('Dermatología');
+      };
+    });
+  </script>
 </head>
 
 <div class="container">
-    <h1>Turno</h1>
-    <h2>Hola, {{ user.username }}</h2>
-</div>    
+  <h1>Hola, {{ user.username }}</h1>
+  <h2>Hola, home de turno Turno</h2>
+  <div class="sidebar">
+    <!-- barra lateral como aparece en el deseño -->
+    <button class="button">Botón 1</button>
+    <button class="button">Botón 2</button>
+    <button class="button">Botón 3</button>
+    <button class="button">Botón 4</button>
+    <button class="button">Botón 5</button>
+  </div>
+  <div>
+    <button id="btnCardiologia">Cardiología</button>
+    <button id="btnNeurologia">Neurología</button>
+    <button id="btnDermatologia">Dermatología</button>
+    <!-- <button class="button">Mecina clinica</button>
+        <button class="button">Oftalmologia</button>
+        <button class="button">Dentita</button>
+        <button class="button">Neurología</button>
+        <button class="button">Otorrinoloringologia</button>
+        <button class="button">Salud mental</button> -->
+  </div>
+  <div id="calendar"></div>
+</div>
 {% endblock %}

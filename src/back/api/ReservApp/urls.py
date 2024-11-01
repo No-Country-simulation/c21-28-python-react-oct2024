@@ -25,7 +25,7 @@ router.register(r'Supplierplans',views.SupplierplansViewSet)
 router.register(r'Suppliers',views.SuppliersViewSet)
 
 urlpatterns = [
-    path('',views.mostrar_index,name='Home'),
+    path('',views.mostrar_turno,name='Home'),
     path('tablas/',include(router.urls)),
     path('registro/',views.registro_usuario,name='Registro'),
     path('login/',views.login_request, name='login'),
