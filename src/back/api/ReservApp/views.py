@@ -195,15 +195,10 @@ def logout_request(request):
     )
 
 
-<<<<<<< HEAD
 def mostrar_turno(request):
 
     return render(request, "ReservApp/turno.html")
-=======
-    
-def mostrar_turno(request):    
-    return render(request,'ReservApp/turno.html')   
 
-def ver_turnos(request):    
-    return render(request,'ReservApp/turnos.html')   
->>>>>>> 3f0309a781ea21dd2d76ac92a03df88f98364dae
+def ver_turnos(request):
+
+    return render(request, "ReservApp/turnos.html")
