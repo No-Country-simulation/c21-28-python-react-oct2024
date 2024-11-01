@@ -2,7 +2,7 @@
 
 Proyecto: RecetApp
 
-![Loguito]<img src="tools/assets/logo-reservapp.svg" alt="Loguito" width="200"/>
+<img src="tools/assets/logo-reservapp.svg" alt="Loguito" width="200"/>
 
 
 Versión: 1.0
@@ -14,7 +14,7 @@ Aplicación web responsiva diseñada para facilitar el acceso a servicios médic
 
 | Avatar                                                                                                                                                       | Nombre               | Rol                                    | Redes Sociales                                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <img width="48" height="60" src="tools/assets/Alba.jpg" alt="Alba Sanchez" /> | Alba Sanchez | Diseñadora UX/UIr | [![Github](https://skillicons.dev/icons?i=github)](https://github.com/JuanManuelSanjurjo) [![Linkedin](https://skillicons.dev/icons?i=linkedin)](https://www.linkedin.com/in/albajsanchez/) |
+| <img width="48" height="60" src="tools/assets/Alba.jpg" alt="Alba Sanchez" /> | Alba Sanchez | Diseñadora UX/UI | [![Github](https://skillicons.dev/icons?i=github)](https://github.com/) [![Linkedin](https://skillicons.dev/icons?i=linkedin)](https://www.linkedin.com/in/albajsanchez/) |
 | <img width="48" height="60" src="tools/assets/Chris.jpg" alt="Christian Gutman" />         | Christian Gutman        | Project Manager                    | [![Github](https://skillicons.dev/icons?i=github)](https://github.com/ChristianGutman) [![Linkedin](https://skillicons.dev/icons?i=linkedin)](https://www.linkedin.com/)                                   |
 | <img width="48" height="60" src="tools/assets/Nehuen.jpg" alt="Nehuen Minvielleo" />           | Nehuen Minvielle        | Backend Developer                 | [![Github](https://skillicons.dev/icons?i=github)](https://github.com/nehuenminvielle) [![Linkedin](https://skillicons.dev/icons?i=linkedin)](https://www.linkedin.com/in/nehuen-minvielle-887a9a236/)                 |
 | <img width="48" height="60" src="tools/assets/Yayo.jpg" alt="Yair Flores" />           | Yair Flores       | Backend Developer                                   | [![Github](https://skillicons.dev/icons?i=github)](https://github.com/Drekon-hub) [![Linkedin](https://skillicons.dev/icons?i=linkedin)](https://www.linkedin.com/in/yair-flores-2b0317237/)                       |
